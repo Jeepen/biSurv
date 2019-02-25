@@ -1,0 +1,3 @@
+tauPar <- function(par = 0, dist = "gamma", output = "tau", auto = FALSE){
+    
+}
