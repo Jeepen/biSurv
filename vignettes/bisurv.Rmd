@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Testing for independence
+
+
 ## Estimating tail dependence for censored data
 \begin{table}[ht]
 \centering
@@ -25,7 +28,7 @@ $\tau$ & 0 & 0.25 & 0.5 & 0.75 \\ \hline
  True value & 0.100 & 0.419 & 0.709 & 0.891 \\ 
 clayton & 0.103 & 0.421 & 0.708 & 0.890 \\ 
   claytonFast & 0.147 & 0.424 & 0.714 & 0.894 \\ \hline
-  True value & 0.100 & . & . & . \\
+  True value & 0.100 & 0.203 & 0.385 & 0.647 \\
   Gumbel & 0.104 & 0.213 & 0.391 & 0.651 \\ 
   GumbelFast & 0.145 & 0.232 & 0.387 & 0.645 \\ 
    \hline
@@ -41,7 +44,7 @@ $\tau$ & 0 & 0.25 & 0.5 & 0.75 \\ \hline
    True value & 0.200 & 0.294 & 0.430 & 0.648 \\ 
 clayton & 0.185 & 0.273 & 0.398 & 0.607 \\ 
   claytonFast & 0.147 & 0.221 & 0.334 & 0.535 \\ \hline
-  True value & 0.200 & . & . &. \\
+  True value & 0.200 & 0.435 & 0.647 & 0.835 \\
   Gumbel & 0.184 & 0.411 & 0.615 & 0.790 \\ 
   GumbelFast & 0.150 & 0.346 & 0.549 & 0.728 \\ 
    \hline

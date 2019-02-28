@@ -41,10 +41,10 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
         }
         if(output == "tau"){
             if(type == "alpha"){
-                return(laplace(par))
+                laplace(par)
             }
             else if(type == "theta"){
-                return(laplace(1/par))
+                laplace(1/par)
             }
             else{
                 stop("type has to be either 'alpha' or 'theta'")
@@ -52,10 +52,10 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
         }
         else if(output == "par"){
             if(type == "alpha"){
-                return(uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root)
+                uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root
             }
             else if(type == "theta"){
-                return(1 / uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root)
+                1 / uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root
             }
             else{
                 stop("type has to be either 'alpha' or 'theta'")
