@@ -13,7 +13,7 @@ tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "da
       qx <- min(KMx$time[Fx >= q])
       qy <- min(KMy$time[Fy >= q])
       prob <- KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])
-      (1 - KMx$surv[KMx$time == qx] - KMy$surv[KMy$time == qy] + prob) / q
+      (2*q - 1 + prob) / q
     }
     else if(tail == "upr"){
       qx <- min(KMx$time[Fx >= q])
@@ -53,7 +53,7 @@ tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "da
 tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska", CI = FALSE,
                            nsim = 1000, alpha = .05){
   if(CI == FALSE){
-    tailDependece(x, y, xstatus, ystatus, q, tail = tail, method = method)
+    tailDependence(x, y, xstatus, ystatus, q, tail = tail, method = method)
   }
   else if(CI == TRUE){
     helpfunc <- function(x, y, xstatus, ystatus, q, tail = tail, method = method){
