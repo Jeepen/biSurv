@@ -10,8 +10,8 @@ Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVec
   int n = x.size();
   Rcpp::NumericMatrix a(n);
   Rcpp::NumericMatrix b(n);
-  for(int i=0;i<n;++i){
-    for(int j=0;j<i;++j){
+  for(int i=0;i<n-1;++i){
+    for(int j=0;j<i-1;++j){
       if((xstatus(i) == 1) & (xstatus(j) == 1)){
         a(i,j) = (x(i) > x(j)) - (x(i) < x(j));
       }

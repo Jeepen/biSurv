@@ -1,4 +1,4 @@
-tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska"){
+tailDep <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska"){
   if(method == "dabrowska"){
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)
@@ -47,25 +47,5 @@ tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "da
     else if(tail == "upr"){
       max(KMx$surv[KMx$time > qq])
     }
-  }
-}
-
-tailDependence <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska", CI = FALSE,
-                           nsim = 1000, alpha = .05){
-  if(CI == FALSE){
-    tailDependence(x, y, xstatus, ystatus, q, tail = tail, method = method)
-  }
-  else if(CI == TRUE){
-    helpfunc <- function(x, y, xstatus, ystatus, q, tail = tail, method = method){
-      ord <- sample(1:length(x), replace = T)
-      tailDependece(x[ord], y[ord], xstatus[ord], ystatus[ord], q, tail = tail, method = method)
-      }
-    est <- replicate(nsim, helpfunc(x, y, xstatus, ystatus, q, tail = tail, method = method))
-    paste0(tailDependece(x, y, xstatus, ystatus, q, tail = tail, method = method),
-             " [", quantile(est, probs = alpha/2), ",", quantile(est, probs = 1-alpha/2),
-             "]")
-  }
-  else{
-    stop("CI has to be either 'TRUE' or 'FALSE'")
   }
 }

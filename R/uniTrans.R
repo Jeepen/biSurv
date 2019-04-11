@@ -1,0 +1,17 @@
+uniTrans <- function(time, status, method = "KM", X = NULL, Intercept = TRUE){
+  if(method == "km"){
+    km <- prodlim(Hist(time, status) ~ 1)
+    predict(km, times = time, type = "cuminc")
+  }
+  else if(method = "cox"){
+      
+  }
+}
+
+
+
+
+
+
+
+

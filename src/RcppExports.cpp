@@ -22,6 +22,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// chr
+List chr(NumericVector x, NumericVector y, NumericVector xstatus, NumericVector ystatus);
+RcppExport SEXP _biSurv_chr(SEXP xSEXP, SEXP ySEXP, SEXP xstatusSEXP, SEXP ystatusSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type xstatus(xstatusSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ystatus(ystatusSEXP);
+    rcpp_result_gen = Rcpp::wrap(chr(x, y, xstatus, ystatus));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eyyfunc
 NumericMatrix eyyfunc(NumericVector x, NumericVector y, NumericVector xuni, NumericVector yuni);
 RcppExport SEXP _biSurv_eyyfunc(SEXP xSEXP, SEXP ySEXP, SEXP xuniSEXP, SEXP yuniSEXP) {
@@ -57,6 +71,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_biSurv_hazardscpp", (DL_FUNC) &_biSurv_hazardscpp, 6},
+    {"_biSurv_chr", (DL_FUNC) &_biSurv_chr, 4},
     {"_biSurv_eyyfunc", (DL_FUNC) &_biSurv_eyyfunc, 4},
     {"_biSurv_taucpp", (DL_FUNC) &_biSurv_taucpp, 8},
     {NULL, NULL, 0}

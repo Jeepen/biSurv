@@ -5,6 +5,10 @@ hazardscpp <- function(x, y, xstatus, ystatus, xuni, yuni) {
     .Call(`_biSurv_hazardscpp`, x, y, xstatus, ystatus, xuni, yuni)
 }
 
+chr <- function(x, y, xstatus, ystatus) {
+    .Call(`_biSurv_chr`, x, y, xstatus, ystatus)
+}
+
 eyyfunc <- function(x, y, xuni, yuni) {
     .Call(`_biSurv_eyyfunc`, x, y, xuni, yuni)
 }
