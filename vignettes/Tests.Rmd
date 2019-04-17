@@ -6,7 +6,8 @@ output: pdf_document
 vignette: >
   %\VignetteIndexEntry{'Tests of functions}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
+  \usepackage{}
 ---
 
 ```{r setup, include = FALSE}
@@ -63,7 +64,7 @@ One way of estimating the probabilities is by rewriting them in terms of surviva
 \end{align*}
 These probabilities can be estimated by using the Kaplan-Meier estimator for the univariate survival functions and the Dabrowska estimator for the bivariate survival function. This is a very legitimite way of doing it, but can be slow since the Dabrowska estimator can take a lot of time for big datasets (number of entries to calculate is $n^2$, where $n$ is the number of bivariate failure times).
 
-There is, however, a faster and simpler way to estimate the probabilities: Imagine we have a dataset of bivariate failure times and event indicators $(t_{i1}, t_{i2}, \delta_{i1}, \delta_{i2})_{i=1,...,n}$. Take the subset of $(t_{i1})$ where $t_{i2}\leq \hat{F_2^{\leftarrow}}$ and $\delta_{i2} = 1$, where $\hat{F}$ is 1 minus the Kaplan-Meier estimate of the survival function ($\delta_{i2} = 1$ is not required for upper tail dependence, and the inequality is of course turning the other way). Then the probabilities are estimated on this subsample using the Kaplan-Meier estimator. 
+There is, however, a faster and simpler way to estimate the probabilities: Imagine we have a dataset of bivariate failure times and event indicators $(t_{i1}, t_{i2}, \delta_{i1}, \delta_{i2})_{i=1,...,n}$. Take the subset of $(t_{i1})$ where $t_{i2}\leq \hat{F}_2^{\leftarrow}$ and $\delta_{i2} = 1$, where $\hat{F}$ is 1 minus the Kaplan-Meier estimate of the survival function ($\delta_{i2} = 1$ is not required for upper tail dependence, and the inequality is of course turning the other way). Then the probabilities are estimated on this subsample using the Kaplan-Meier estimator. 
 
 How do they work? Both estimators have been tested for both upper and lower tail dependence on simulated data. $q = 0.10$ for lower tail dependence and $q=0.80$ for upper tail dependence. 100 bivariate survival times were simulated from two copula models: the Clayton copula and the Gumbel copula. Marginal distributions were exponential with a parameter of 1, while censoring times were simulated from an exponential distribution with a rate parameter of $0.3$ leading to roughly 23 \% censoring. The results are summarized in Table \ref{tail} with the average estimated tail dependence from 10000 simulations. 
 

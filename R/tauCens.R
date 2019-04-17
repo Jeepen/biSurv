@@ -1,3 +1,12 @@
+#' Estimator of Kendall's tau for censored data
+#'
+#' @title Estimator of Kendall's tau for censored data
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @param alpha 1 minus confidence level
+#' @seealso tauPar
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tauCens <- function(x,y,xstatus,ystatus, alpha = .05){
   KMx <- prodlim::prodlim(Hist(x, xstatus) ~ 1)
   KMy <- prodlim::prodlim(Hist(y, ystatus) ~ 1)

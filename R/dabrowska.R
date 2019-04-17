@@ -1,3 +1,12 @@
+#' Dabrowska estimator of the bivariate survival function
+#'
+#' @title Dabrowska estimator of the bivariate survival function
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @return Matrix with Dabrowska estimate of the bivariate survival function
+#' @seealso hazards
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 dabrowska <- function(x,y,xstatus,ystatus){
   xuni <- sort_unique(x)
   yuni <- sort_unique(y)
