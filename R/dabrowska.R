@@ -4,7 +4,7 @@
 #' @param x,y Vectors of failure times
 #' @param xstatus,ystatus Status indicators for failure times
 #' @return Matrix with Dabrowska estimate of the bivariate survival function
-#' @seealso hazards
+#' @seealso hazards hazardscpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 dabrowska <- function(x,y,xstatus,ystatus){

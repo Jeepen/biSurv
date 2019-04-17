@@ -7,9 +7,9 @@
 hazards(x, y, xstatus, ystatus)
 }
 \arguments{
-\item{x, y}{Vectors of the failure times}
+\item{x, y}{Vectors of failure times}
 
-\item{xstatus, ystatus}{Status indicators for the failure times}
+\item{xstatus, ystatus}{Status indicators for failure times}
 }
 \value{
 List with the estimates of the three bivariate hazard functions. Each hazard function is a matrix.
@@ -21,5 +21,5 @@ Returns non-parametric estimates of the bivariate hazard function
 hazardscpp dabrowska
 }
 \author{
-Jeppe E. H. Madsen
+Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 }
