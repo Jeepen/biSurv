@@ -2,7 +2,7 @@
 % Please edit documentation in R/CHRtheo.R, R/impchr.R
 \name{CHRtheo}
 \alias{CHRtheo}
-\title{Get theoretical CHR as a function of the survival function for different frailty models}
+\title{Returns theoretical CHR as a function of the survival function for different frailty models}
 \usage{
 CHRtheo(par, dist = "gamma", type = "alpha")
 
@@ -25,7 +25,7 @@ A vector of length 97 with the theoretical CHR when the survival function is equ
 A vector of length 97 with the theoretical CHR when the survival function is equal to 0.01,...,0.97
 }
 \description{
-Get theoretical CHR as a function of the survival function for different frailty models
+Returns theoretical CHR as a function of the survival function for different frailty models
 
 Get theoretical CHR as a function of the survival function for different frailty models
 }
@@ -35,7 +35,7 @@ chrdiff
 chrdiff
 }
 \author{
-Jeppe E. H. Madsen
+Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 }

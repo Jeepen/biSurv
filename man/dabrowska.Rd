@@ -18,7 +18,7 @@ Matrix with Dabrowska estimate of the bivariate survival function
 Dabrowska estimator of the bivariate survival function
 }
 \seealso{
-hazards
+hazards hazardscpp
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
