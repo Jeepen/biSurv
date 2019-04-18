@@ -5,6 +5,14 @@ hazardscpp <- function(x, y, xstatus, ystatus, xuni, yuni) {
     .Call(`_biSurv_hazardscpp`, x, y, xstatus, ystatus, xuni, yuni)
 }
 
+#' Concordance and discordance matrices for bivariate survival data
+#' @title Concordance and discordance matrices for bivariate survival data
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @return Concordance and discordance matrices for bivariate survival data
+#' @seealso CHRtheo
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 chr <- function(x, y, xstatus, ystatus) {
     .Call(`_biSurv_chr`, x, y, xstatus, ystatus)
 }

@@ -1,6 +1,14 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+//' Concordance and discordance matrices for bivariate survival data
+//' @title Concordance and discordance matrices for bivariate survival data
+//' @param x,y Vectors of failure times
+//' @param xstatus,ystatus Status indicators for failure times
+//' @return Concordance and discordance matrices for bivariate survival data
+//' @seealso CHRtheo
+//' @export
+//' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 // [[Rcpp::export]]
 List chr(NumericVector x, NumericVector y, NumericVector xstatus, 
          NumericVector ystatus){
