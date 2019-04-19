@@ -10,8 +10,7 @@ using namespace Rcpp;
 //' @export
 //' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 // [[Rcpp::export]]
-List chr(NumericVector x, NumericVector y, NumericVector xstatus, 
-         NumericVector ystatus){
+List chrCpp(NumericVector x, NumericVector y, NumericVector xstatus, NumericVector ystatus){
   double n = x.size();
   NumericMatrix c = NumericMatrix(n);
   NumericMatrix d = NumericMatrix(n);

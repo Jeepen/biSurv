@@ -7,7 +7,7 @@
 #' @seealso hazardscpp dabrowska
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-hazards <- function(x,y,xstatus,ystatus){
+biHazards <- function(x,y,xstatus,ystatus){
   xuni <- sort_unique(x)
   yuni <- sort_unique(y)
   h <- hazardscpp(x,y,xstatus,ystatus,xuni,yuni)

@@ -27,7 +27,7 @@ Estimated ISD between theoretical and empirical CHR
 Get integrated squared difference (ISD) between empirical and theoretical CHR
 }
 \seealso{
-CHRtheo
+CHRtheo CHR chr
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

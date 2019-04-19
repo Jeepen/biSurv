@@ -4,14 +4,14 @@
 #' @param x,y Vectors of failure times
 #' @param xstatus,ystatus Status indicators for failure times
 #' @param n Number of 'pieces' to estimate CHR on
-#' @return
-#' @seealso CHRtheo chrdiff chr
+#' @return Non-parametric estimate of piecewise constant CHR
+#' @seealso CHRtheo chrdiff chrCpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(x,y,xstatus,ystatus,n=5){
   n0 <- length(x)
   S <- dabrowska(x,y,xstatus,ystatus)
-  condis <- chr(x, y, xstatus, ystatus)
+  condis <- chrCpp(x, y, xstatus, ystatus)
   xuni <- sort_unique(x)
   yuni <- sort_unique(y)
   xmin <- outer(x, x, FUN = "pmin")
