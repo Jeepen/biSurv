@@ -4,14 +4,16 @@
 \alias{tauCens}
 \title{Estimator of Kendall's tau for censored data}
 \usage{
-tauCens(x, y, xstatus, ystatus, alpha = 0.05)
+tauCens(x, y, xstatus, ystatus, alpha = 0.05, method = "adjusted")
 }
 \arguments{
 \item{x, y}{Vectors of failure times}
 
 \item{xstatus, ystatus}{Status indicators for failure times}
 
-\item{alpha}{1 minus confidence level}
+\item{alpha}{Significance level}
+
+\item{method}{Which estimator to use}
 }
 \description{
 Estimator of Kendall's tau for censored data
