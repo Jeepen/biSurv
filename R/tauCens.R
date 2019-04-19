@@ -8,6 +8,8 @@
 #' @seealso tauPar
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
+#' @useDynLib biSurv
+#' @importFrom Rcpp sourceCpp
 tauCens <- function(x,y,xstatus,ystatus, alpha = .05, method = "adjusted"){
     if(method=="adjusted"){
         KMx <- prodlim::prodlim(Hist(x, xstatus) ~ 1)

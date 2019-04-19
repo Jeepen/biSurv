@@ -6,13 +6,21 @@
 #' @param x,y Vectors of failure times
 #' @param xstatus,ystatus Status indicators for failure times
 #' @return Concordance and discordance matrices for bivariate survival data
-#' @seealso CHRtheo
+#' @seealso CHR CHRtheo chrdiff
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 chrCpp <- function(x, y, xstatus, ystatus) {
     .Call('_biSurv_chrCpp', PACKAGE = 'biSurv', x, y, xstatus, ystatus)
 }
 
+#' Matrix with expected values for CHR independence test
+#'
+#' @title Matrix with expected values for CHR independence test
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @param xuni,yuni Grid points to get expected value for
+#' @return Matrix with expected values for CHR independence test
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com
 eyyfunc <- function(x, y, xuni, yuni) {
     .Call('_biSurv_eyyfunc', PACKAGE = 'biSurv', x, y, xuni, yuni)
 }

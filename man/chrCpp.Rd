@@ -18,7 +18,7 @@ Concordance and discordance matrices for bivariate survival data
 Concordance and discordance matrices for bivariate survival data
 }
 \seealso{
-CHRtheo
+CHR CHRtheo chrdiff
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
