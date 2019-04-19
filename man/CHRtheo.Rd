@@ -18,7 +18,7 @@ A vector of length 97 with the theoretical CHR when the survival function is equ
 Returns theoretical CHR as a function of the survival function for different frailty models
 }
 \seealso{
-chrdiff CHR chr
+chrdiff CHR chrCpp
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

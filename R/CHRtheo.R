@@ -4,7 +4,7 @@
 #' @param par Parameter value for frailty model
 #' @param dist Frailty distribution. Gamma ("gamma"), positive stable ("posstab") and inverse Gaussian ("invgauss") are available.
 #' @return A vector of length 97 with the theoretical CHR when the survival function is equal to 0.01,...,0.97
-#' @seealso chrdiff CHR chr
+#' @seealso chrdiff CHR chrCpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHRtheo <- function(par, dist = "gamma", type = "alpha"){

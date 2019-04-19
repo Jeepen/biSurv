@@ -8,7 +8,7 @@
 #' @param type Parameterization of frailty parameter (either "alpha" or "theta")
 #' @param n How many intervals should the CHR be estimated on.
 #' @return Estimated ISD between theoretical and empirical CHR
-#' @seealso CHRtheo CHR chr
+#' @seealso CHRtheo CHR chrCpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 chrdiff <- function(x, y, xstatus, ystatus, par, dist = "gamma", type = "alpha", n = 5){
