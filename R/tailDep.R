@@ -1,8 +1,20 @@
+#' Estimators of "tail-dependence" for bivariate survival data
+#'
+#' @title Estimators of "tail-dependence" for bivariate survival data
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @param q Quantile to estimate "tail-dependence" for
+#' @param tail Tail to estimate tail-dependence for
+#' @param method What estimator to use
+#' @return Estimate of "tail-dependence"
+#' @seealso impTailDep
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tailDep <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska"){
   if(method == "dabrowska"){
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)
-    haz <- hazards(x,y,xstatus,ystatus)
+    haz <- biHazards(x,y,xstatus,ystatus)
     H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
     H[is.nan(H)] <- 0
     KMx <- prodlim(Hist(x,xstatus) ~ 1)
