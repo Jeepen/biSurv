@@ -11,56 +11,50 @@
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tailDep <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska"){
-  if(method == "dabrowska"){
-    xuni <- sort_unique(x)
-    yuni <- sort_unique(y)
-    haz <- biHazards(x,y,xstatus,ystatus)
-    H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
-    H[is.nan(H)] <- 0
-    KMx <- prodlim(Hist(x,xstatus) ~ 1)
-    KMy <- prodlim(Hist(y,ystatus) ~ 1)
-    Fx <- 1 - KMx$surv
-    Fy <- 1 - KMy$surv
-    if(tail == "lwr"){
-      qx <- min(KMx$time[Fx >= q])
-      qy <- min(KMy$time[Fy >= q])
-      prob <- KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])
-      (2*q - 1 + prob) / q
+    if(!(method %in% c("dabrowska","fast"))){
+        stop("tail has to be either 'lwr' or 'upr'")
     }
-    else if(tail == "upr"){
-      qx <- min(KMx$time[Fx >= q])
-      qy <- min(KMy$time[Fy >= q])
-      (KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
+    if(!(tail %in% c("lwr","upr"))){
+        stop("tail has to be either 'lwr' or 'upr'")
     }
-    else{
-      stop("tail has to be either 'lwr' or 'upr'")
-    }
-  }
-  else if(method == "fast"){
-    KMy <- prodlim(Hist(y, ystatus) ~ 1)
-    FF <- 1-KMy$surv
-    qq <- min(KMy$time[FF >= q])
-    if(tail == "lwr"){
-      xx <- x[y < qq & ystatus == 1]
-      xxstatus <- xstatus[y < qq & ystatus == 1]
-    }
-    else if(tail == "upr"){
-      xx <- x[y > qq]
-      xxstatus <- xstatus[y > qq]
-    }
-    else{
-      stop("tail has to be either 'lwr' or 'upr'")
-    }
-    KMx <- prodlim(Hist(xx, xxstatus) ~ 1)
-    if(tail == "lwr"){
-      Fx <- 1-KMx$surv
-      max(Fx[KMx$time < qq])
-    }
-    else if(tail == "upr"){
-      max(KMx$surv[KMx$time > qq])
-    }
-  }
-  else{
-      stop("method has to be either 'dabrowska' or 'fast'")
-  }
+    switch(method, dabrowska={
+        xuni <- sort_unique(x)
+        yuni <- sort_unique(y)
+        haz <- biHazards(x,y,xstatus,ystatus)
+        H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
+        H[is.nan(H)] <- 0
+        KMx <- prodlim(Hist(x,xstatus) ~ 1)
+        KMy <- prodlim(Hist(y,ystatus) ~ 1)
+        Fx <- 1 - KMx$surv
+        Fy <- 1 - KMy$surv
+        switch(tail, lwr={
+            qx <- min(KMx$time[Fx >= q])
+            qy <- min(KMy$time[Fy >= q])
+            prob <- KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])
+            (2*q - 1 + prob) / q
+        },upr={
+            qx <- min(KMx$time[Fx >= q])
+            qy <- min(KMy$time[Fy >= q])
+            (KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
+        })
+    },fast={
+        KMy <- prodlim(Hist(y, ystatus) ~ 1)
+        FF <- 1-KMy$surv
+        qq <- min(KMy$time[FF >= q])
+        switch(tail, lwr={
+            xx <- x[y < qq & ystatus == 1]
+            xxstatus <- xstatus[y < qq & ystatus == 1]
+        },upr={
+            xx <- x[y > qq]
+            xxstatus <- xstatus[y > qq]
+        })
+        KMx <- prodlim(Hist(xx, xxstatus) ~ 1)
+        switch(tail, lwr={
+            Fx <- 1-KMx$surv
+            max(Fx[KMx$time < qq])
+        },upr={
+            max(KMx$surv[KMx$time > qq])
+        })  
+    })
 }
+
