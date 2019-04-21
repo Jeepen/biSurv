@@ -1,32 +1,66 @@
-#' Returns non-parametric estimate of piecewise constant CHR
+#' Returns theoretical CHR as a function of the survival function for different frailty models
 #'
-#' @title Returns non-parametric estimate of piecewise constant CHR
-#' @param x,y Vectors of failure times
-#' @param xstatus,ystatus Status indicators for failure times
-#' @param n Number of 'pieces' to estimate CHR on
-#' @return Non-parametric estimate of piecewise constant CHR
-#' @seealso CHRtheo chrdiff chrCpp
+#' @title Returns theoretical CHR as a function of the survival function for different frailty models
+#' @param x,y Parameter value for frailty model
+#' @param xstatus,ystatus Frailty distribution. Gamma ("gamma"), positive stable ("posstab") and inverse Gaussian ("invgauss") are available.
+#' @param n Number of steps for empirical CHR
+#' @param without Distributions to ignore
+#' @return A vector of length 97 with the theoretical CHR when the survival function is equal to 0.01,...,0.97
+#' @seealso chrCpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-CHR <- function(x,y,xstatus,ystatus,n=5){
-  n0 <- length(x)
-  S <- dabrowska(x,y,xstatus,ystatus)
-  condis <- chrCpp(x, y, xstatus, ystatus)
-  xuni <- sort_unique(x)
-  yuni <- sort_unique(y)
-  xmin <- outer(x, x, FUN = "pmin")
-  ymin <- outer(y, y, FUN = "pmin")
-  SS <- matrix(NA,n0,n0)
-  for(i in 2:n0){
-    for(j in 1:(i-1)){
-      SS[i,j] <- S$S[xuni == xmin[i,j], yuni == ymin[i,j]]
+CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
+    gammaDiff <- stableDiff <- invgaussDiff <- Names <- NULL
+    if(length(x)!=length(y)){
+        stop("Length of x and y differ")
     }
-  }
-  breaks <- seq(0,1,length.out=n+1)
-  out <- numeric(n)
-  for(i in 1:n){
-      out[i] <- sum(condis$c[SS > breaks[i] & SS < breaks[i+1]], na.rm = T) /
-          sum(condis$d[SS > breaks[i] & SS < breaks[i+1]], na.rm = T)
-  }
-  out
+    if(length(xstatus)!=length(ystatus)){
+        stop("Length of xstatus and ystatus differ")
+    }
+    n0 <- length(x)
+    S <- dabrowska(x,y,xstatus,ystatus)
+    condis <- chrCpp(x,y,xstatus,ystatus)
+    xuni <- sort_unique(x)
+    yuni <- sort_unique(y)
+    xmin <- outer(x,x,FUN="pmin")
+    ymin <- outer(y,y,FUN="pmin")
+    SS <- matrix(NA,n0,n0)
+    for(i in 2:n0){
+        for(j in 1:(i-1)){
+            SS[i,j] <- S$S[xuni == xmin[i,j], yuni == ymin[i,j]]
+        }
+    }
+    breaks <- seq(0,1,length.out=n+1)
+    out <- numeric(n)
+    for(i in 1:n){
+        out[i] <- sum(condis$c[SS > breaks[i] & SS < breaks[i+1]], na.rm = T) /
+            sum(condis$d[SS > breaks[i] & SS < breaks[i+1]], na.rm = T)
+    }
+    emp <- rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
+    time <- c(x,y)
+    status <- c(xstatus,ystatus)
+    id <- rep(1:length(x),2)
+    if(!("gamma" %in% without)){
+        gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))
+        theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1]
+        gammaCHR <- rep(1+theta, 97)
+        gammaDiff <- mean((emp-gammaCHR)^2)
+        Names <- c(Names, "Gamma")
+    }
+    if(!("posstab" %in% without)){
+        stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame())
+        alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
+        stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.97,.01)))
+        stableDiff <- mean((emp-stableCHR)^2)
+        Names <- c(Names, "Positive stable")
+    }
+    if(!("invgauss" %in% without)){
+        invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame())
+        alpha2 <- exp(invgauss$logtheta)
+        invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
+        invgaussDiff <- mean((emp-invgaussCHR)^2)
+        Names <- c(Names, "Inverse Gaussian")
+    }
+    data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff))
 }
+

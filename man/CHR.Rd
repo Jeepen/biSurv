@@ -2,25 +2,27 @@
 % Please edit documentation in R/CHR.R
 \name{CHR}
 \alias{CHR}
-\title{Returns non-parametric estimate of piecewise constant CHR}
+\title{Returns theoretical CHR as a function of the survival function for different frailty models}
 \usage{
-CHR(x, y, xstatus, ystatus, n = 5)
+CHR(x, y, xstatus, ystatus, n = 5, without = NULL)
 }
 \arguments{
-\item{x, y}{Vectors of failure times}
+\item{x, y}{Parameter value for frailty model}
 
-\item{xstatus, ystatus}{Status indicators for failure times}
+\item{xstatus, ystatus}{Frailty distribution. Gamma ("gamma"), positive stable ("posstab") and inverse Gaussian ("invgauss") are available.}
 
-\item{n}{Number of 'pieces' to estimate CHR on}
+\item{n}{Number of steps for empirical CHR}
+
+\item{without}{Distributions to ignore}
 }
 \value{
-Non-parametric estimate of piecewise constant CHR
+A vector of length 97 with the theoretical CHR when the survival function is equal to 0.01,...,0.97
 }
 \description{
-Returns non-parametric estimate of piecewise constant CHR
+Returns theoretical CHR as a function of the survival function for different frailty models
 }
 \seealso{
-CHRtheo chrdiff chrCpp
+chrCpp
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
