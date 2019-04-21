@@ -60,4 +60,7 @@ tailDep <- function(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska
       max(KMx$surv[KMx$time > qq])
     }
   }
+  else{
+      stop("method has to be either 'dabrowska' or 'fast'")
+  }
 }
