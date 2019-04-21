@@ -2,6 +2,17 @@
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' Returns Kendall's tau and concordance and discordance matrices for bivariate survival data
+//'
+//' @title Returns Kendall's tau and concordance and discordance matrices for bivariate survival data
+//' @param x,y Vectors of failure times
+//' @param xstatus,ystatus Status indicators for failure times
+//' @param KMxsurv,KMysurv Survival functions for the marginal distributions
+//' @param KMxtime,KMytime Grid points for marginal survival functions
+//' @return Kendall's tau and concordance and discordance matrices for bivariate survival data
+//' @seealso tauCens
+//' @export
+//' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 // [[Rcpp::export]]
 Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector xstatus, 
             Rcpp::NumericVector ystatus, Rcpp::NumericVector KMxsurv, 

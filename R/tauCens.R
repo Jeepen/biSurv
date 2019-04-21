@@ -5,7 +5,7 @@
 #' @param xstatus,ystatus Status indicators for failure times
 #' @param alpha Significance level
 #' @param method Which estimator to use
-#' @seealso tauPar
+#' @seealso tauPar taucpp
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv

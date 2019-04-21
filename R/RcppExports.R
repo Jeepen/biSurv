@@ -2,6 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Concordance and discordance matrices for bivariate survival data
+#' 
 #' @title Concordance and discordance matrices for bivariate survival data
 #' @param x,y Vectors of failure times
 #' @param xstatus,ystatus Status indicators for failure times
@@ -29,6 +30,17 @@ hazardscpp <- function(x, y, xstatus, ystatus, xuni, yuni) {
     .Call('_biSurv_hazardscpp', PACKAGE = 'biSurv', x, y, xstatus, ystatus, xuni, yuni)
 }
 
+#' Returns Kendall's tau and concordance and discordance matrices for bivariate survival data
+#'
+#' @title Returns Kendall's tau and concordance and discordance matrices for bivariate survival data
+#' @param x,y Vectors of failure times
+#' @param xstatus,ystatus Status indicators for failure times
+#' @param KMxsurv,KMysurv Survival functions for the marginal distributions
+#' @param KMxtime,KMytime Grid points for marginal survival functions
+#' @return Kendall's tau and concordance and discordance matrices for bivariate survival data
+#' @seealso tauCens
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 taucpp <- function(x, y, xstatus, ystatus, KMxsurv, KMysurv, KMxtime, KMytime) {
     .Call('_biSurv_taucpp', PACKAGE = 'biSurv', x, y, xstatus, ystatus, KMxsurv, KMysurv, KMxtime, KMytime)
 }

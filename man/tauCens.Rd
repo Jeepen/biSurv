@@ -19,7 +19,7 @@ tauCens(x, y, xstatus, ystatus, alpha = 0.05, method = "adjusted")
 Estimator of Kendall's tau for censored data
 }
 \seealso{
-tauPar
+tauPar taucpp
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

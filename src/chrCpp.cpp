@@ -2,6 +2,7 @@
 using namespace Rcpp;
 
 //' Concordance and discordance matrices for bivariate survival data
+//' 
 //' @title Concordance and discordance matrices for bivariate survival data
 //' @param x,y Vectors of failure times
 //' @param xstatus,ystatus Status indicators for failure times
