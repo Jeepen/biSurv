@@ -20,5 +20,5 @@ chrdiff <- function(x, y, xstatus, ystatus, par, dist = "gamma", type = "alpha",
   }
   imp0[(1+(n-1)*100/n):97] <- imp[n]
   theo <- CHRtheo(par, dist = dist, type = type)
-  sum((imp0 - theo)^2)
+  mean((imp0 - theo)^2)
 }
