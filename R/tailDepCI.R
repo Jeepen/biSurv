@@ -17,7 +17,7 @@ tailDepCI <- function(x,y,xstatus,ystatus,q,method="dabrowska",tail="lwr",n=1000
         d <- data[i,]
         tailDep(d$x,d$y,d$xstatus,d$ystatus,q,method=method,tail=tail,without=c("gamma","posstab","invgauss"))[1,2]
     }
-    out <- boot::boot(data=d,statistic=f,R=n)
-    print(boot::boot.ci(out))
+    out <- boot(data=d,statistic=f,R=n)
+    print(boot.ci(out))
     plot(out)
 }
