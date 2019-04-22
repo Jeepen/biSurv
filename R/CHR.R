@@ -39,7 +39,7 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
     emp <- rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
     p <- ggplot2::qplot(seq(.01,.97,by=.01),emp,geom="step") + ggplot2::theme_bw() +
         ggplot2::xlab("Survival function value") + ggplot2::ylab("CHR") +
-        ggplot2::geom_hline(aes(yintercept=1),linetype=2)
+        ggplot2::geom_hline(ggplot2::aes(yintercept=1),linetype=2)
     time <- c(x,y)
     status <- c(xstatus,ystatus)
     id <- rep(1:length(x),2)
