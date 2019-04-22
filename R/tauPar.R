@@ -18,6 +18,18 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
     if(!(type %in% c("alpha","theta"))){
         stop("type has to be either 'alpha' or 'theta'")
     }
+    if(output=="par" & (tau>1|tau< -1)){
+        stop("'tau' has to be between -1 and 1")
+    }
+    if(dist=="posstab"&output=="tau"&type=="alpha"&par>=1){
+        stop("alpha has to be lower than 1")
+    }
+    if(dist=="posstab"&output=="tau"&type=="theta"&par<=1){
+        stop("theta has to be greater than 1")
+    }
+    if(dist=="invgauss"&output=="tau"&par<0){
+        stop("'par' has to be greater than 0")
+    }
     if(type=="theta"&output=="tau"&dist!="gamma"){
         par <- 1/par
     }
