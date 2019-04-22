@@ -37,6 +37,8 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
             sum(condis$d[SS > breaks[i] & SS < breaks[i+1]], na.rm = T)
     }
     emp <- rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
+    p <- ggplot2::qplot(seq(.01,.97,by=.01),emp,geom="step") + ggplot2::theme_bw() +
+        ggplot2::xlab("Survival function value") + ggplot2::ylab("CHR")
     time <- c(x,y)
     status <- c(xstatus,ystatus)
     id <- rep(1:length(x),2)
@@ -46,6 +48,7 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         gammaCHR <- rep(1+theta, 97)
         gammaDiff <- mean((emp-gammaCHR)^2)
         Names <- c(Names, "Gamma")
+        p <- p + ggplot2::geom_line(aes(y=gammaCHR,colour="Gamma"))
     }
     if(!("posstab" %in% without)){
         stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame())
@@ -53,6 +56,7 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.97,.01)))
         stableDiff <- mean((emp-stableCHR)^2)
         Names <- c(Names, "Positive stable")
+        p <- p + ggplot2::geom_line(aes(y=stableCHR,colour="Positive stable"))
     }
     if(!("invgauss" %in% without)){
         invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame())
@@ -60,7 +64,9 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
         invgaussDiff <- mean((emp-invgaussCHR)^2)
         Names <- c(Names, "Inverse Gaussian")
+        p <- p + ggplot2::geom_line(aes(y=invgaussCHR,colour="Inverse Gaussian"))
     }
-    data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff))
+    print(data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff)))
+    p
 }
 
