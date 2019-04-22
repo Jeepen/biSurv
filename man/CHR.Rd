@@ -2,24 +2,24 @@
 % Please edit documentation in R/CHR.R
 \name{CHR}
 \alias{CHR}
-\title{Returns theoretical CHR as a function of the survival function for different frailty models}
+\title{Integrated squared distance (ISD) between empirical and theoretical CHRs}
 \usage{
 CHR(x, y, xstatus, ystatus, n = 5, without = NULL)
 }
 \arguments{
-\item{x, y}{Parameter value for frailty model}
+\item{x, y}{Vectors of failure times}
 
-\item{xstatus, ystatus}{Frailty distribution. Gamma ("gamma"), positive stable ("posstab") and inverse Gaussian ("invgauss") are available.}
+\item{xstatus, ystatus}{Status indicators for failure times}
 
 \item{n}{Number of steps for empirical CHR}
 
 \item{without}{Distributions to ignore}
 }
 \value{
-A vector of length 97 with the theoretical CHR when the survival function is equal to 0.01,...,0.97
+Data.frame with ISD for different frailty distributions
 }
 \description{
-Returns theoretical CHR as a function of the survival function for different frailty models
+Integrated squared distance (ISD) between empirical and theoretical CHRs
 }
 \seealso{
 chrCpp

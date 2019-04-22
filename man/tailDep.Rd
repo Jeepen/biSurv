@@ -4,7 +4,8 @@
 \alias{tailDep}
 \title{Estimators of "tail-dependence" for bivariate survival data}
 \usage{
-tailDep(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska")
+tailDep(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska",
+  without = NULL)
 }
 \arguments{
 \item{x, y}{Vectors of failure times}
@@ -13,18 +14,20 @@ tailDep(x, y, xstatus, ystatus, q, tail = "lwr", method = "dabrowska")
 
 \item{q}{Quantile to estimate "tail-dependence" for}
 
-\item{tail}{Tail to estimate tail-dependence for}
+\item{tail}{Tail to estimate "tail dependence" for}
 
 \item{method}{What estimator to use}
+
+\item{without}{Distributions to ignore}
 }
 \value{
-Estimate of "tail-dependence"
+Estimate of "tail dependence"
 }
 \description{
-Estimators of "tail-dependence" for bivariate survival data
+Estimators of "tail dependence" for bivariate survival data
 }
 \seealso{
-impTailDep
+tailDepCI
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
