@@ -37,4 +37,7 @@ tauCens <- function(x,y,xstatus,ystatus, alpha = .05, method = "adjusted"){
                    upr = tau+qnorm(1-alpha/2)*sqrt(var.hat))
 
     }
+    else{
+        stop("method has to be either 'dabrowska' or 'naive'")
+    }
 }

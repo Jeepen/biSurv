@@ -36,9 +36,8 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         out[i] <- sum(condis$c[SS > breaks[i] & SS < breaks[i+1]], na.rm = T) /
             sum(condis$d[SS > breaks[i] & SS < breaks[i+1]], na.rm = T)
     }
-    emp <- rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
-    p <- qplot(seq(.01,.97,by=.01),emp,geom="step") + theme_bw() +
-        xlab("Survival function value") + ylab("CHR") + geom_hline(aes(yintercept=1),linetype=2)
+    emp <-  rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
+    data <- data.frame(S = seq(.01,.97,.01), Empirical = emp)
     time <- c(x,y)
     status <- c(xstatus,ystatus)
     id <- rep(1:length(x),2)
@@ -48,7 +47,7 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         gammaCHR <- rep(1+theta, 97)
         gammaDiff <- mean((emp-gammaCHR)^2)
         Names <- c(Names, "Gamma")
-        p <- p + geom_line(aes(y=gammaCHR,colour="Gamma"))
+        data <- cbind(data, Gamma = gammaCHR)
     }
     if(!("posstab" %in% without)){
         stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame(),
@@ -57,7 +56,7 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.97,.01)))
         stableDiff <- mean((emp-stableCHR)^2)
         Names <- c(Names, "Positive stable")
-        p <- p + geom_line(aes(y=stableCHR,colour="Positive stable"))
+        data <- cbind(data, PositiveStable = stableCHR)
     }
     if(!("invgauss" %in% without)){
         invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame(),
@@ -66,9 +65,13 @@ CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
         invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
         invgaussDiff <- mean((emp-invgaussCHR)^2)
         Names <- c(Names, "Inverse Gaussian")
-        p <- p + geom_line(aes(y=invgaussCHR,colour="Inverse Gaussian"))
+        data <- cbind(data,InverseGaussian=invgaussCHR)
     }
     print(data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff)))
-    p
+    melted <- melt(data,id="S")
+    colnames(melted)[2] <- "Model"
+    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+        geom_hline(aes(yintercept=1),linetype=2) + xlab("Survival function value") +
+        ylab("CHR")
 }
 
