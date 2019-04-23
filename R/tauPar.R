@@ -18,7 +18,7 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
     if(!(type %in% c("alpha","theta"))){
         stop("type has to be either 'alpha' or 'theta'")
     }
-    if(output=="par" & (tau>1|tau< -1)){
+    if(output=="par" & (par>1|par< -1)){
         stop("'tau' has to be between -1 and 1")
     }
     if(dist=="posstab"&output=="tau"&type=="alpha"&par>=1){
