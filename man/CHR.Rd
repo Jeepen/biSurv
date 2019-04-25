@@ -21,6 +21,9 @@ Data.frame with ISD for different frailty distributions
 \description{
 Integrated squared distance (ISD) between empirical and theoretical CHRs
 }
+\references{
+Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 10.1007/s10985-004-0386-8.
+}
 \seealso{
 chrCpp
 }

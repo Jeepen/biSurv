@@ -7,6 +7,8 @@
 #' @param without Distributions to ignore
 #' @return Data.frame with ISD for different frailty distributions
 #' @seealso chrCpp
+#' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 10.1007/s10985-004-0386-8.
+#' @useDynLib biSurv
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(x,y,xstatus,ystatus,n=5,without=NULL){
