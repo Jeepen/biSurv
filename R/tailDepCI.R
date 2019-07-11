@@ -9,6 +9,8 @@
 #' @param n Number of bootstraps
 #' @return CI for "tail dependence"
 #' @seealso tailDep
+#' @import boot
+#' @import graphics
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tailDepCI <- function(x,y,xstatus,ystatus,q,method="dabrowska",tail="lwr",n=1000){

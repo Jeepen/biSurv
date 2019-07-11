@@ -7,6 +7,7 @@
 #' @param method Which estimator to use
 #' @param without Distributions to ignore
 #' @seealso tauPar taucpp
+#' @import stats
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv

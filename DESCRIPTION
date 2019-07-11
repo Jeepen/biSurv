@@ -6,13 +6,12 @@ Date: 2019-02-14
 Author: Jeppe E. H. Madsen
 Maintainer: Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 Description: Survival function estimator(s), dependence measures for bivariate survival data, and tools to help determine if given frailty model is a good choice.
-License: License: GPL (>= 3)
-Imports: Rcpp (>= 1.0.0)
+License: GPL (>= 3)
+Imports: Rcpp (>= 1.0.0), frailtyEM, survival, Rfast, ggplot2, reshape2, prodlim, boot, stats, graphics
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Depends: prodlim, Rfast, ggplot2, boot
 Encoding: UTF-8
 RoxygenNote: 6.1.1

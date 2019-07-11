@@ -4,8 +4,8 @@
 
 // [[Rcpp::export]]
 Rcpp::List hazardscpp(arma::vec x, arma::vec y, arma::vec xstatus, 
-                  arma::vec ystatus, arma::vec xuni, 
-                  arma::vec yuni){
+		      arma::vec ystatus, arma::vec xuni, 
+		      arma::vec yuni){
   double n1 = xuni.size();
   double n2 = yuni.size();
   arma::mat R(n1, n2); 

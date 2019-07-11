@@ -5,6 +5,7 @@
 #' @param xstatus,ystatus Status indicators for failure times
 #' @return List with the estimates of the three bivariate hazard functions. Each hazard function is a matrix.
 #' @seealso hazardscpp dabrowska
+#' @import Rfast
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 biHazards <- function(x,y,xstatus,ystatus){
