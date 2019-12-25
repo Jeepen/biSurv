@@ -1,15 +1,38 @@
 #' Non-parametric independence test for bivariate survival data
 #'
 #' @title Non-parametric independence test for bivariate survival data
-#' @param x,y Vectors of failure times
-#' @param xstatus,ystatus Status indicators for failure times
+#' @param formula a formula object, with the response on the left of a ~
+#'          operator, and the terms on the right.  The response must be a
+#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
+#' @param data a data.frame in which to interpret the variables named in the
+#'          \code{formula} argument.
 #' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula
 #' @return Test statistic, SE and p-value for independence test.
 #' @seealso biHazards
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-independenceTest <- function(x,y,xstatus,ystatus, weight = "independence"){
-    Call <- match.call()
+independenceTest <- function(formula, data, weight = "independence"){
+    Call <- mf <- match.call()
+    m <- match(c("formula", "data"), names(mf), 0L)
+    mf[[1L]] <- quote(stats::model.frame)
+    mf <- eval(mf, parent.frame())
+    if(grep("cluster",names(suppe))
+    if(ncol(mf)>2){
+        suppe <- mf[,2:ncol(mf)]
+        suppe <- suppe[,-grep("cluster",names(suppe))]
+        m <- coxph(mf[,1]~suppe)
+        time <- 1-exp(-predict(m,type="expected"))
+    }
+    else time <- mf[,1][,1]
+    status <- mf[,1][,2]
+    clusters <- mf[,grep("cluster",names(mf))]
+    if(any(table(clusters)!=2)){
+        stop("There has to be exactly two observations in each cluster")
+    }
+    firsts <- match(unique(clusters), clusters)
+    seconds <- length(clusters) - match(unique(clusters),rev(clusters)) + 1
+    x <- time[firsts];xstatus <- status[firsts]
+    y <- time[seconds];ystatus <- status[seconds]
     eyy <- eyyfunc(x,y,sort_unique(x),sort_unique(y))
     nu1 <- nrow(eyy)
     nu2 <- ncol(eyy)
@@ -30,25 +53,13 @@ independenceTest <- function(x,y,xstatus,ystatus, weight = "independence"){
     }
     else{
         stop("'weight' has to be either 'independence', 'dabrowska', 'atRisk', a number or
-a specific matrix")
+a matrix")
     }
     cumhaz1 <- m1$cumhaz
     cumhaz2 <- m2$cumhaz
     n <- length(x)
-    M1 <- matrix(NA, nrow = nu1, ncol = n)
-    M2 <- matrix(NA, nrow = nu2, ncol = n)
-    for(t in 1:nu1){
-        for(i in 1:n){
-            M1[t,i] <- xstatus[i] * (x[i] <= m1$time[t]) - cumhaz1[t]*(x[i] > m1$time[t]) -
-                cumhaz1[which(m1$time == x[i])]*(x[i] <= m1$time[t])
-        }
-    }
-    for(t in 1:nu2){
-        for(i in 1:n){
-            M2[t,i] <- ystatus[i] * (y[i] <= m2$time[t]) - cumhaz2[t]*(y[i] > m2$time[t]) -
-                cumhaz2[which(m2$time == y[i])]*(y[i] <= m2$time[t])
-        }
-    }
+    M1 <- martin(x,xstatus,m1$time,cumhaz1,n,nu1)
+    M2 <- martin(y,ystatus,m2$time,cumhaz2,n,nu2)
     dM1 <- rbind(M1[1,],diff(M1))
     dM2 <- rbind(M2[1,],diff(M2))
     testStatistic <- 0
@@ -60,12 +71,8 @@ a specific matrix")
     varianceEst <- sum(weight^2 * eyy * help) * n
     ## Present wrapping
     test <- testStatistic / sqrt(varianceEst)
-    ## d <- data.frame(testStatistic, sqrt(varianceEst), test, 2*pnorm(-abs(test)))
-    ## colnames(d) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
     out <- list(call = Call, est = testStatistic, se = sqrt(varianceEst), zval = test,
                 p = 2 * pnorm(-abs(test)))
-    ## out$call <- Call
-    ## out$coefficients <- 
     class(out) <- "independenceTest"
     out
 }
@@ -84,4 +91,8 @@ print.independenceTest <- function (x, digits = max(3L, getOption("digits") - 3L
                  na.print = "NA", ...)
     cat("\n")
     invisible(x)
+}
+
+fisk <- function(formula, data){
+
 }
