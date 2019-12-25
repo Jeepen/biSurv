@@ -4,16 +4,17 @@
 \alias{CHR}
 \title{Integrated squared distance (ISD) between empirical and theoretical CHRs}
 \usage{
-CHR(x, y, xstatus, ystatus, n = 5, without = NULL)
+CHR(formula, data, n = 5)
 }
 \arguments{
-\item{x, y}{Vectors of failure times}
+\item{formula}{a formula object, with the response on the left of a ~
+operator, and the terms on the right.  The response must be a
+survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{xstatus, ystatus}{Status indicators for failure times}
+\item{data}{a data.frame in which to interpret the variables named in the
+\code{formula} argument.}
 
 \item{n}{Number of steps for empirical CHR}
-
-\item{without}{Distributions to ignore}
 }
 \value{
 Data.frame with ISD for different frailty distributions

@@ -4,12 +4,15 @@
 \alias{biHazards}
 \title{Returns non-parametric estimates of the bivariate hazard function}
 \usage{
-biHazards(x, y, xstatus, ystatus)
+biHazards(formula, data)
 }
 \arguments{
-\item{x, y}{Vectors of failure times}
+\item{formula}{a formula object, with the response on the left of a ~
+operator, and the terms on the right.  The response must be a
+survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{xstatus, ystatus}{Status indicators for failure times}
+\item{data}{a data.frame in which to interpret the variables named in the
+\code{formula} argument.}
 }
 \value{
 List with the estimates of the three bivariate hazard functions. Each hazard function is a matrix.

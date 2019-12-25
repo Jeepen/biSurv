@@ -1,8 +1,11 @@
 #' Estimator of Kendall's tau for censored data
 #'
 #' @title Estimator of Kendall's tau for censored data
-#' @param x,y Vectors of failure times
-#' @param xstatus,ystatus Status indicators for failure times
+#' @param formula a formula object, with the response on the left of a ~
+#'          operator, and the terms on the right.  The response must be a
+#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
+#' @param data a data.frame in which to interpret the variables named in the
+#'          \code{formula} argument.
 #' @param alpha Significance level
 #' @param method Which estimator to use
 #' @param without Distributions to ignore
@@ -12,8 +15,10 @@
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
 #' @importFrom Rcpp sourceCpp
-tauCens <- function(x,y,xstatus,ystatus, alpha = .05, method = "adjusted",without=NULL){
-    models <- Names <- NULL
+tauCens <- function(formula, data, alpha = .05, method = "adjusted",without=NULL){
+    models <- NULL
+    d <- uniTrans(formula, data)
+    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     id <- rep(1:length(x),2)
     if(method=="adjusted"){
         KMx <- prodlim::prodlim(Hist(x, xstatus) ~ 1)
@@ -43,7 +48,7 @@ tauCens <- function(x,y,xstatus,ystatus, alpha = .05, method = "adjusted",withou
                           upr = tau+qnorm(1-alpha/2)*sqrt(var.hat))
     }
     else{
-        stop("method has to be either 'dabrowska' or 'naive'")
+        stop("method has to be either 'adjusted' or 'naive'")
     }
     if(!("gamma" %in% without)){
         gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))

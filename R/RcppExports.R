@@ -13,6 +13,10 @@ hazardscpp <- function(x, y, xstatus, ystatus, xuni, yuni) {
     .Call('_biSurv_hazardscpp', PACKAGE = 'biSurv', x, y, xstatus, ystatus, xuni, yuni)
 }
 
+martin <- function(time, status, times, cumhaz, n, nu) {
+    .Call('_biSurv_martin', PACKAGE = 'biSurv', time, status, times, cumhaz, n, nu)
+}
+
 taucpp <- function(x, y, xstatus, ystatus, KMxsurv, KMysurv, KMxtime, KMytime) {
     .Call('_biSurv_taucpp', PACKAGE = 'biSurv', x, y, xstatus, ystatus, KMxsurv, KMysurv, KMxtime, KMytime)
 }

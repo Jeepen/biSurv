@@ -12,27 +12,9 @@
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 independenceTest <- function(formula, data, weight = "independence"){
-    Call <- mf <- match.call()
-    m <- match(c("formula", "data"), names(mf), 0L)
-    mf[[1L]] <- quote(stats::model.frame)
-    mf <- eval(mf, parent.frame())
-    if(grep("cluster",names(suppe))
-    if(ncol(mf)>2){
-        suppe <- mf[,2:ncol(mf)]
-        suppe <- suppe[,-grep("cluster",names(suppe))]
-        m <- coxph(mf[,1]~suppe)
-        time <- 1-exp(-predict(m,type="expected"))
-    }
-    else time <- mf[,1][,1]
-    status <- mf[,1][,2]
-    clusters <- mf[,grep("cluster",names(mf))]
-    if(any(table(clusters)!=2)){
-        stop("There has to be exactly two observations in each cluster")
-    }
-    firsts <- match(unique(clusters), clusters)
-    seconds <- length(clusters) - match(unique(clusters),rev(clusters)) + 1
-    x <- time[firsts];xstatus <- status[firsts]
-    y <- time[seconds];ystatus <- status[seconds]
+    d <- uniTrans(formula, data)
+    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
+    Call <- match.call()
     eyy <- eyyfunc(x,y,sort_unique(x),sort_unique(y))
     nu1 <- nrow(eyy)
     nu2 <- ncol(eyy)
@@ -83,7 +65,6 @@ print.independenceTest <- function (x, digits = max(3L, getOption("digits") - 3L
 {
     cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
         "\n\n", sep = "")
-    ## else cat("\nCoefficients:\n")
     coefs <- cbind(Estimate = x$est, `Std. Error` = x$se, 
                    `z value` = x$zval, `Pr(>|t|)` = x$p)
     rownames(coefs) <- "Test"
@@ -93,6 +74,3 @@ print.independenceTest <- function (x, digits = max(3L, getOption("digits") - 3L
     invisible(x)
 }
 
-fisk <- function(formula, data){
-
-}

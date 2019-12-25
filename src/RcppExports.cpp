@@ -50,6 +50,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// martin
+NumericMatrix martin(NumericVector time, NumericVector status, NumericVector times, NumericVector cumhaz, int n, int nu);
+RcppExport SEXP _biSurv_martin(SEXP timeSEXP, SEXP statusSEXP, SEXP timesSEXP, SEXP cumhazSEXP, SEXP nSEXP, SEXP nuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type status(statusSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cumhaz(cumhazSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type nu(nuSEXP);
+    rcpp_result_gen = Rcpp::wrap(martin(time, status, times, cumhaz, n, nu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // taucpp
 Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector xstatus, Rcpp::NumericVector ystatus, Rcpp::NumericVector KMxsurv, Rcpp::NumericVector KMysurv, Rcpp::NumericVector KMxtime, Rcpp::NumericVector KMytime);
 RcppExport SEXP _biSurv_taucpp(SEXP xSEXP, SEXP ySEXP, SEXP xstatusSEXP, SEXP ystatusSEXP, SEXP KMxsurvSEXP, SEXP KMysurvSEXP, SEXP KMxtimeSEXP, SEXP KMytimeSEXP) {
@@ -73,6 +89,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_biSurv_chrCpp", (DL_FUNC) &_biSurv_chrCpp, 4},
     {"_biSurv_eyyfunc", (DL_FUNC) &_biSurv_eyyfunc, 4},
     {"_biSurv_hazardscpp", (DL_FUNC) &_biSurv_hazardscpp, 6},
+    {"_biSurv_martin", (DL_FUNC) &_biSurv_martin, 6},
     {"_biSurv_taucpp", (DL_FUNC) &_biSurv_taucpp, 8},
     {NULL, NULL, 0}
 };
