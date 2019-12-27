@@ -7,7 +7,6 @@
 #' @param data a data.frame containing the variables in the model
 #' @param cluster Cluster variable
 #' @param n Number of steps for empirical CHR
-#' @param plot Should the curves be plotted or not
 #' @return Data.frame with ISD for different frailty distributions
 #' @seealso chrCpp
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
@@ -18,8 +17,9 @@
 #' @import reshape2
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-CHR <- function(formula, data, cluster, n=5, plot = TRUE){
+CHR <- function(formula, data, cluster, n=5){
     Call <- match.call()
+    cluster <- eval(substitute(cluster),data)
     d <- uniTrans(formula, data, cluster)
     S <- dabrowska(formula, data, cluster)
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
@@ -69,14 +69,6 @@ CHR <- function(formula, data, cluster, n=5, plot = TRUE){
                                           PositiveStable = stableCHR, InverseGaussian=invgaussCHR))
     class(d) <- "CHR"
     d
-    if(plot){
-        Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
-        melted <- melt(d$d,id="S")
-        colnames(melted)[2] <- "Model"
-        ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
-            geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
-            ylab("CHR")
-    }
 }
 
 #' @export
@@ -97,4 +89,22 @@ print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.co
     print(out)
     ## cat("\n")
     ## invisible(x)
+}
+
+#' Plot of CHR as a function of the survival function
+#'
+#' @title Plot of CHR as a function of the survival function
+#' @param object An object of class \code{CHR} 
+#' @return Plot of CHR as a function of the survival function
+#' @seealso chrCpp
+#' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
+plotCHR <- function(object){
+    Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
+    melted <- melt(object$d,id="S")
+    colnames(melted)[2] <- "Model"
+    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+        geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
+        ylab("CHR")   
 }

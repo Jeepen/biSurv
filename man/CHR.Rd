@@ -4,7 +4,7 @@
 \alias{CHR}
 \title{Integrated squared distance (ISD) between empirical and theoretical CHRs}
 \usage{
-CHR(formula, data, cluster, n = 5, plot = TRUE)
+CHR(formula, data, cluster, n = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -16,8 +16,6 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 \item{cluster}{Cluster variable}
 
 \item{n}{Number of steps for empirical CHR}
-
-\item{plot}{Should the curves be plotted or not}
 }
 \value{
 Data.frame with ISD for different frailty distributions
