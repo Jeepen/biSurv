@@ -4,15 +4,17 @@
 \alias{tauCens}
 \title{Estimator of Kendall's tau for censored data}
 \usage{
-tauCens(formula, data, alpha = 0.05, method = "adjusted")
+tauCens(formula, data = NULL, cluster, alpha = 0.05,
+  method = "adjusted")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 
 \item{alpha}{Significance level}
 

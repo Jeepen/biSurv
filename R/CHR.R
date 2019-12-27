@@ -4,9 +4,10 @@
 #' @param formula a formula object, with the response on the left of a ~
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
-#' @param data a data.frame in which to interpret the variables named in the
-#'          \code{formula} argument.
+#' @param data a data.frame containing the variables in the model
+#' @param cluster Cluster variable
 #' @param n Number of steps for empirical CHR
+#' @param plot Should the curves be plotted or not
 #' @return Data.frame with ISD for different frailty distributions
 #' @seealso chrCpp
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
@@ -17,10 +18,10 @@
 #' @import reshape2
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-CHR <- function(formula, data, n=5){
+CHR <- function(formula, data, cluster, n=5, plot = TRUE){
     Call <- match.call()
-    d <- uniTrans(formula, data)
-    S <- dabrowska(formula, data)
+    d <- uniTrans(formula, data, cluster)
+    S <- dabrowska(formula, data, cluster)
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     if(length(x)!=length(y)){
         stop("Length of x and y differ")
@@ -64,18 +65,18 @@ CHR <- function(formula, data, n=5){
     alpha2 <- exp(invgauss$logtheta)
     invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
     ## invgaussDiff <- mean((emp-invgaussCHR)^2)
-    ## Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
     d <- list(call = Call, d = data.frame(S = seq(.01,.97,.01), Empirical = emp, Gamma = gammaCHR,
                                           PositiveStable = stableCHR, InverseGaussian=invgaussCHR))
     class(d) <- "CHR"
     d
-    ## ans <- data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff))
-    ## ans[order(ans$ISD),]
-    ## melted <- melt(data,id="S")
-    ## colnames(melted)[2] <- "Model"
-    ## ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
-    ##     geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t_1,t_2))) +
-    ##     ylab("CHR")
+    if(plot){
+        Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
+        melted <- melt(d$d,id="S")
+        colnames(melted)[2] <- "Model"
+        ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+            geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
+            ylab("CHR")
+    }
 }
 
 #' @export
@@ -96,16 +97,4 @@ print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.co
     print(out)
     ## cat("\n")
     ## invisible(x)
-}
-
-#' @export
-ggplot.CHR <- function(x){
-    melted <- melt(x$d,id="S")
-    colnames(melted)[2] <- "Model"
-    setDT(melted)
-    melted[Model == "PositiveStable","Model"] <- "Positive stable"
-    melted[Model == "InverseGaussian","Model"] <- "Inverse Gaussian"    
-    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
-        geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
-        ylab("CHR")
 }

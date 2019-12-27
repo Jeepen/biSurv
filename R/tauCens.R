@@ -4,8 +4,8 @@
 #' @param formula a formula object, with the response on the left of a ~
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
-#' @param data a data.frame in which to interpret the variables named in the
-#'          \code{formula} argument.
+#' @param data a data.frame containing the variables in the model
+#' @param cluster Cluster variable
 #' @param alpha Significance level
 #' @param method Which estimator to use
 #' @seealso tauPar taucpp
@@ -14,10 +14,11 @@
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
 #' @importFrom Rcpp sourceCpp
-tauCens <- function(formula, data, alpha = .05, method = "adjusted"){
+tauCens <- function(formula, data = NULL, cluster, alpha = .05, method = "adjusted"){
     Call <- match.call()
     models <- NULL
-    d <- uniTrans(formula, data)
+    cluster <- eval(substitute(cluster),data)
+    d <- uniTrans(formula, data, cluster)
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     id <- rep(1:length(x),2)
     if(method=="adjusted"){
@@ -57,12 +58,23 @@ tauCens <- function(formula, data, alpha = .05, method = "adjusted"){
                         control = emfrail_control(se = F, lik_ci = F, ca_test = F))
     alpha2 <- exp(invgauss$logtheta)
     models <- c(tauPar(theta), tauPar(alpha1,dist="posstab"), tauPar(alpha2,dist="invgauss"))
-    list(call = Call, coefficients = tau, se = sqrt(var.hat), models = models)
+    out <- list(call = Call, coefficients = tau, se = sqrt(var.hat), models = models)
+    class(out) <- "tauCens"
+    out
 }
 
 #' @export
 print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.cor = x$symbolic.cor, 
     signif.stars = getOption("show.signif.stars"), ...) 
 {
-    2
+    cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+        "\n\n", sep = "")
+    coefficients <- c(x$coefficients, x$models)
+    se <- c(x$se,rep(NA,3))
+    coefs <- cbind(Estimate = coefficients, `Std. Error` = se, 
+                   `lwr` = coefficients - 1.96 * se, `upr` = coefficients + 1.96 * se)
+    rownames(coefs) <- c("Empirical", "Gamma", "Positive stable", "Inverse Gaussian")
+    printCoefmat(coefs, digits = digits, na.print = "", ...)
+    cat("\n")
+    invisible(x)
 }

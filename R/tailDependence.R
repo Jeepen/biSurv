@@ -4,8 +4,8 @@
 #' @param formula a formula object, with the response on the left of a ~
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
-#' @param data a data.frame in which to interpret the variables named in the
-#'          \code{formula} argument.
+#' @param data a data.frame containing the variables in the model
+#' @param cluster Cluster variable
 #' @param q Quantile to estimate "tail-dependence" for
 #' @param tail Tail to estimate "tail dependence" for
 #' @param method What estimator to use
@@ -13,9 +13,11 @@
 #' @seealso tailDepCI
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-tailDependence <- function(formula, data,q,tail = "lwr", method = "dabrowska"){
+tailDependence <- function(formula, data, cluster, q, tail = "lwr", method = "dabrowska"){
+    Call <- match.call()
+    cluster <- eval(substitute(cluster),data)
     Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
-    d <- uniTrans(formula, data)
+    d <- uniTrans(formula, data, cluster)
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     id <- rep(1:length(x),2)
     if(!(method %in% c("dabrowska","fast"))){
@@ -27,7 +29,7 @@ tailDependence <- function(formula, data,q,tail = "lwr", method = "dabrowska"){
     switch(method, dabrowska={
         xuni <- sort_unique(x)
         yuni <- sort_unique(y)
-        haz <- biHazards(x,y,xstatus,ystatus)
+        haz <- biHazards(formula, data, cluster)
         H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
         H[is.nan(H)] <- 0
         KMx <- prodlim(Hist(x,xstatus) ~ 1)

@@ -4,17 +4,18 @@
 #' @param formula a formula object, with the response on the left of a ~
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
-#' @param data a data.frame in which to interpret the variables named in the
-#'          \code{formula} argument.
+#' @param data a data.frame containing the variables in the model
+#' @param cluster Cluster variable
 #' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula
 #' @return Test statistic, SE and p-value for independence test.
 #' @seealso biHazards
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-independenceTest <- function(formula, data, weight = "independence"){
-    d <- uniTrans(formula, data)
-    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
+independenceTest <- function(formula, data = NULL, cluster, weight = "independence"){
     Call <- match.call()
+    cluster <- eval(substitute(cluster),data)
+    d <- uniTrans(formula, data, cluster)
+    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     eyy <- eyyfunc(x,y,sort_unique(x),sort_unique(y))
     nu1 <- nrow(eyy)
     nu2 <- ncol(eyy)
@@ -25,7 +26,7 @@ independenceTest <- function(formula, data, weight = "independence"){
         weight <- m1$surv %o% m2$surv
     }
     else if(weight == "dabrowska"){
-        weight <- dabrowska(x,y,xstatus,ystatus)$S
+        weight <- dabrowska(formula, data, cluster)$S
     }
     else if(weight == "atRisk"){
         weight <- eyy

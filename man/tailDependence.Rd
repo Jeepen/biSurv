@@ -4,15 +4,17 @@
 \alias{tailDependence}
 \title{Estimators of "tail-dependence" for bivariate survival data}
 \usage{
-tailDependence(formula, data, q, tail = "lwr", method = "dabrowska")
+tailDependence(formula, data, cluster, q, tail = "lwr",
+  method = "dabrowska")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 
 \item{q}{Quantile to estimate "tail-dependence" for}
 

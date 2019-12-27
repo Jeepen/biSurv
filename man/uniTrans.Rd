@@ -4,15 +4,16 @@
 \alias{uniTrans}
 \title{Transform survival data into uniform marginals using a Cox proportional hazards model}
 \usage{
-uniTrans(formula, data)
+uniTrans(formula, data = NULL, cluster = NULL)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 }
 \value{
 Data.frame with two vectors of failure times and two vectors of status indicators

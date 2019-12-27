@@ -4,16 +4,17 @@
 \alias{tailDepCI}
 \title{Bootstrapped confidence interval for "tail dependence"}
 \usage{
-tailDepCI(formula, data, q, method = "dabrowska", tail = "lwr",
-  n = 1000)
+tailDepCI(formula, data, cluster, q, method = "dabrowska",
+  tail = "lwr", n = 1000)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 
 \item{q}{Quantile to estimate "tail-dependence" for}
 

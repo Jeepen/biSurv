@@ -2,6 +2,7 @@
 
 S3method(print,CHR)
 S3method(print,independenceTest)
+S3method(print,tauCens)
 export(CHR)
 export(biHazards)
 export(dabrowska)

@@ -4,15 +4,16 @@
 \alias{dabrowska}
 \title{Dabrowska estimator of the bivariate survival function}
 \usage{
-dabrowska(formula, data)
+dabrowska(formula, data, cluster)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 }
 \value{
 Matrix with Dabrowska estimate of the bivariate survival function

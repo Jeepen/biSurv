@@ -4,15 +4,17 @@
 \alias{independenceTest}
 \title{Non-parametric independence test for bivariate survival data}
 \usage{
-independenceTest(formula, data, weight = "independence")
+independenceTest(formula, data = NULL, cluster,
+  weight = "independence")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
-\item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} argument.}
+\item{data}{a data.frame containing the variables in the model}
+
+\item{cluster}{Cluster variable}
 
 \item{weight}{Weight function for test. Default is 'independence' which is optimal for the Frank copula}
 }
