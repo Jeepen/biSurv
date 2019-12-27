@@ -4,8 +4,7 @@
 \alias{tauCens}
 \title{Estimator of Kendall's tau for censored data}
 \usage{
-tauCens(formula, data, alpha = 0.05, method = "adjusted",
-  without = NULL)
+tauCens(formula, data, alpha = 0.05, method = "adjusted")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -18,8 +17,6 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 \item{alpha}{Significance level}
 
 \item{method}{Which estimator to use}
-
-\item{without}{Distributions to ignore}
 }
 \description{
 Estimator of Kendall's tau for censored data

@@ -18,7 +18,9 @@
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(formula, data, n=5){
+    Call <- match.call()
     d <- uniTrans(formula, data)
+    S <- dabrowska(formula, data)
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     if(length(x)!=length(y)){
         stop("Length of x and y differ")
@@ -27,7 +29,6 @@ CHR <- function(formula, data, n=5){
         stop("Length of xstatus and ystatus differ")
     }
     n0 <- length(x)
-    S <- dabrowska(x,y,xstatus,ystatus)
     condis <- chrCpp(x,y,xstatus,ystatus)
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)
@@ -52,27 +53,59 @@ CHR <- function(formula, data, n=5){
     gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))
     theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1]
     gammaCHR <- rep(1+theta, 97)
-    gammaDiff <- mean((emp-gammaCHR)^2)
+    ## gammaDiff <- mean((emp-gammaCHR)^2)
     stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame(),
                       control = emfrail_control(se = F, lik_ci = F, ca_test = F))
     alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
     stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.97,.01)))
-    stableDiff <- mean((emp-stableCHR)^2)
-    data <- cbind(data, )
+    ## stableDiff <- mean((emp-stableCHR)^2)
     invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame(),
                         control = emfrail_control(se = F, lik_ci = F, ca_test = F))
     alpha2 <- exp(invgauss$logtheta)
     invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
-    invgaussDiff <- mean((emp-invgaussCHR)^2)
-    Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
-    data <- data.frame(S = seq(.01,.97,.01), Empirical = emp, Gamma = gammaCHR,
-                       PositiveStable = stableCHR, InverseGaussian=invgaussCHR)
-    ans <- data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff))
-    ans[order(ans$ISD),]
-    melted <- melt(data,id="S")
-    colnames(melted)[2] <- "Model"
-    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
-        geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t_1,t_2))) +
-        ylab("CHR")
+    ## invgaussDiff <- mean((emp-invgaussCHR)^2)
+    ## Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
+    d <- list(call = Call, d = data.frame(S = seq(.01,.97,.01), Empirical = emp, Gamma = gammaCHR,
+                                          PositiveStable = stableCHR, InverseGaussian=invgaussCHR))
+    class(d) <- "CHR"
+    d
+    ## ans <- data.frame(Distribution = Names, ISD = c(gammaDiff, stableDiff, invgaussDiff))
+    ## ans[order(ans$ISD),]
+    ## melted <- melt(data,id="S")
+    ## colnames(melted)[2] <- "Model"
+    ## ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+    ##     geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t_1,t_2))) +
+    ##     ylab("CHR")
 }
 
+#' @export
+print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.cor = x$symbolic.cor, 
+    signif.stars = getOption("show.signif.stars"), ...) 
+{
+    cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+        "\n\n", sep = "")
+    gammaDiff <- mean((x$d$Empirical-x$d$Gamma)^2)
+    stableDiff <- mean((x$d$Empirical-x$d$PositiveStable)^2)
+    invgaussDiff <- mean((x$d$Empirical-x$d$InverseGaussian)^2)
+    ans <- data.frame(Distribution = c("Gamma", "Positive stable", "Inverse Gaussian"),
+                      ISD = c(gammaDiff, stableDiff, invgaussDiff))
+    out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
+    rownames(out) <- ans$Distribution[order(ans$ISD)]
+    ## printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
+    ## na.print = "NA", ...)
+    print(out)
+    ## cat("\n")
+    ## invisible(x)
+}
+
+#' @export
+ggplot.CHR <- function(x){
+    melted <- melt(x$d,id="S")
+    colnames(melted)[2] <- "Model"
+    setDT(melted)
+    melted[Model == "PositiveStable","Model"] <- "Positive stable"
+    melted[Model == "InverseGaussian","Model"] <- "Inverse Gaussian"    
+    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+        geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
+        ylab("CHR")
+}
