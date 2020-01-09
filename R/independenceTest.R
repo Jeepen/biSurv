@@ -5,7 +5,7 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula
+#' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula 
 #' @return Test statistic, SE and p-value for independence test.
 #' @seealso biHazards
 #' @export
@@ -19,14 +19,14 @@ independenceTest <- function(formula, data = NULL, weight = "independence"){
     eyy <- eyyfunc(x,y,sort_unique(x),sort_unique(y))
     nu1 <- nrow(eyy)
     nu2 <- ncol(eyy)
-    m1 <- survfit(Surv(x,xstatus)~1)
-    m2 <- survfit(Surv(y,ystatus)~1)
+    m1 <- survfit(survival::Surv(x,xstatus)~1)
+    m2 <- survfit(survival::Surv(y,ystatus)~1)
     if(class(weight) == "matrix"){}
     else if(weight == "independence"){
         weight <- m1$surv %o% m2$surv
     }
     else if(weight == "dabrowska"){
-        weight <- dabrowska(formula, data, cluster)$S
+        weight <- dabrowska(formula, data)$S
     }
     else if(weight == "atRisk"){
         weight <- eyy
@@ -61,13 +61,13 @@ a matrix")
 }
 
 #' @export
-print.independenceTest <- function (x, digits = max(3L, getOption("digits") - 3L), symbolic.cor = x$symbolic.cor, 
+print.independenceTest <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.cor = x$symbolic.cor, 
     signif.stars = getOption("show.signif.stars"), ...) 
 {
     cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
         "\n\n", sep = "")
     coefs <- cbind(Estimate = x$est, `Std. Error` = x$se, 
-                   `z value` = x$zval, `Pr(>|t|)` = x$p)
+                   `z value` = x$zval, `Pr(>|z|)` = x$p)
     rownames(coefs) <- "Test"
     printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
                  na.print = "NA", ...)
@@ -75,3 +75,16 @@ print.independenceTest <- function (x, digits = max(3L, getOption("digits") - 3L
     invisible(x)
 }
 
+#' @export
+summary.independenceTest <- function(object, ...) 
+{
+    cat("\nCall:\n", paste(deparse(object$call), sep = "\n", collapse = "\n"), 
+        "\n\n", sep = "")
+    coefs <- cbind(Estimate = object$est, `Std. Error` = object$se, 
+                   `z value` = object$zval, `Pr(>|z|)` = object$p)
+    rownames(coefs) <- "Test"
+    printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
+                 na.print = "NA", ...)
+    cat("\n")
+    invisible(object)
+}

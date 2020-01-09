@@ -9,7 +9,6 @@
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 uniTrans <- function(formula, data = NULL){
-    X <- model.matrix(formula, data)
     mf <- match.call()
     Terms <- terms(formula, "cluster", data = data)
     mf$formula <- Terms
@@ -17,6 +16,9 @@ uniTrans <- function(formula, data = NULL){
     mf <- eval(mf, parent.frame())
     m <- grep("cluster", names(mf))
     if(length(m) != 0) cluster <- mf[,m] else cluster <- NULL
+    X <- model.matrix(formula, data)
+    hm <- grep("cluster", colnames(X))
+    X <- X[,-hm]
     Y <- model.extract(mf, "response")
     if(!is.Surv(Y)) stop("Expected a 'Surv'-object")
     if(any(X != 1)){

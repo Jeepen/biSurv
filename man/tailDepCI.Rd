@@ -4,7 +4,15 @@
 \alias{tailDepCI}
 \title{Bootstrapped confidence interval for "tail dependence"}
 \usage{
-tailDepCI(formula, data, q, method = "dabrowska", tail = "lwr", n = 1000)
+tailDepCI(
+  formula,
+  data,
+  q,
+  method = "dabrowska",
+  tail = "lwr",
+  n = 1000,
+  level = 0.95
+)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -20,6 +28,8 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 \item{tail}{Tail to estimate "tail dependence" for}
 
 \item{n}{Number of bootstraps}
+
+\item{level}{The confidence level required.}
 }
 \value{
 CI for "tail dependence"

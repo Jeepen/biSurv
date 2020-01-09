@@ -8,8 +8,8 @@
 #' @param q Quantile to estimate "tail-dependence" for
 #' @param tail Tail to estimate "tail dependence" for
 #' @param method What estimator to use
-#' @return Estimate of "tail dependence"
-#' @seealso tailDepCI
+#' @return Estimate of "tail-dependence"
+#' @seealso tailDepCI tailDependencePlot
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tailDependence <- function(formula, data, q, tail = "lwr", method = "dabrowska"){
@@ -84,6 +84,32 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "dabrowska")
     out <- c(out,switch(tail,
                         lwr=(exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)+2*q-1)/q,
                         upr=exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)/(1-q)))
-    data.frame(Distribution = Names, TailDependence = out)
+    ans <- data.frame(Distribution = Names, TailDependence = out)
+    colnames(ans) <- c("Distribution", "Tail dependence")
+    ans
 }
 
+#' Function that plots the "tail-dependence" as a function of the chosen quantile
+#'
+#' @title Function that plots the "tail-dependence" as a function of the chosen quantile
+#' @param formula a formula object, with the response on the left of a ~
+#'          operator, and the terms on the right.  The response must be a
+#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
+#' @param data a data.frame containing the variables in the model
+#' @param q Quantiles to estimate "tail-dependence" for
+#' @param tail Tail to estimate "tail dependence" for
+#' @param method What estimator to use
+#' @return Plot of "tail-dependence" as a function of the quantile; estimated and implied by frailty models
+#' @seealso tailDepCI tailDependence
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
+tailDependencePlot <- function(formula, data, q = seq(.1,.2,.005), tail = "lwr",
+                               method = "dabrowska"){
+    if(tail == "upr" & all(q == seq(.1,.2,.005))) q <- 1-q
+    out <- t(sapply(q, function(x) tailDependence(formula,data,x,tail,method)[,2]))
+    colnames(out) <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
+    out <- reshape2::melt(out)
+    out <- cbind(out, q)
+    ggplot(mapping = aes(x=q, y=value, group=Var2, colour = Var2), data = out) +
+        geom_line() + theme_bw() + xlab("Quantile") + ylab("Tail dependence")
+}

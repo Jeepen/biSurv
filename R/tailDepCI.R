@@ -9,13 +9,14 @@
 #' @param method How to estimate survival probabilities. Available are 'dabrowska' and 'fast'
 #' @param tail Tail to estimate "tail dependence" for
 #' @param n Number of bootstraps
+#' @param level The confidence level required.
 #' @return CI for "tail dependence"
 #' @seealso tailDep
 #' @import boot
 #' @import graphics
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-tailDepCI <- function(formula, data, q, method = "dabrowska", tail="lwr", n = 1000){
+tailDepCI <- function(formula, data, q, method = "dabrowska", tail="lwr", n = 1000, level = .95){
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
@@ -26,13 +27,20 @@ tailDepCI <- function(formula, data, q, method = "dabrowska", tail="lwr", n = 10
         ind <- sample(1:length(x), replace = TRUE)
         d <- data.frame(time = c(x[ind], y[ind]), status = c(xstatus[ind], ystatus[ind]),
                         id = rep(1:length(x),2))
-        sims[i] <- tailDep(Surv(time,status) ~ 1, data = d,
-                           cluster = id, q, method = method, tail=tail)
+        sims[i] <- tailDep(Surv(time,status) ~ cluster(id), data = d, q, method = method, tail=tail)
     }
-    quantile(sims, c(.025,.975))
+    d <- data.frame(time = c(x, y), status = c(xstatus, ystatus), id = rep(1:length(x),2))
+    tmp <- tailDep(Surv(time,status) ~ cluster(id), data = d, q, method = method, tail=tail)
+    a <- (1-level)/2
+    a <- c(a,1-a)
+    ## pct <- format.perc(a, 3)
+    pct <- paste(a*100, "%")
+    ci <- array(NA_real_, dim = c(1L, 2L), dimnames = list("Tail dependence", pct))  
+    ci[] <- tmp +  qnorm(a) * sd(sims)
+    ci
 }
 
-tailDep <- function(formula, data, cluster, q, tail = "lwr", method = "dabrowska"){
+tailDep <- function(formula, data, q, tail = "lwr", method = "dabrowska"){
     Call <- match.call()
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
@@ -49,7 +57,7 @@ tailDep <- function(formula, data, cluster, q, tail = "lwr", method = "dabrowska
     switch(method, dabrowska={
         xuni <- sort_unique(x)
         yuni <- sort_unique(y)
-        haz <- biHazards(formula, data, cluster)
+        haz <- biHazards(formula, data)
         H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
         H[is.nan(H)] <- 0
         KMx <- prodlim(Hist(x,xstatus) ~ 1)

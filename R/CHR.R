@@ -94,11 +94,11 @@ print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.co
 #' @export
 summary.CHR <- function(object, ...) 
 {
-    cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+    cat("\nCall:\n", paste(deparse(object$call), sep = "\n", collapse = "\n"), 
         "\n\n", sep = "")
-    gammaDiff <- mean((x$d$Empirical-x$d$Gamma)^2)
-    stableDiff <- mean((x$d$Empirical-x$d$PositiveStable)^2)
-    invgaussDiff <- mean((x$d$Empirical-x$d$InverseGaussian)^2)
+    gammaDiff <- mean((object$d$Empirical-object$d$Gamma)^2)
+    stableDiff <- mean((object$d$Empirical-object$d$PositiveStable)^2)
+    invgaussDiff <- mean((object$d$Empirical-object$d$InverseGaussian)^2)
     ans <- data.frame(Distribution = c("Gamma", "Positive stable", "Inverse Gaussian"),
                       ISD = c(gammaDiff, stableDiff, invgaussDiff))
     out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
