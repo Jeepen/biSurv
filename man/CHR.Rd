@@ -4,7 +4,7 @@
 \alias{CHR}
 \title{Integrated squared distance (ISD) between empirical and theoretical CHRs}
 \usage{
-CHR(formula, data, cluster, n = 5)
+CHR(formula, data, n = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -12,8 +12,6 @@ operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
 \item{data}{a data.frame containing the variables in the model}
-
-\item{cluster}{Cluster variable}
 
 \item{n}{Number of steps for empirical CHR}
 }

@@ -4,7 +4,7 @@
 \alias{biHazards}
 \title{Returns non-parametric estimates of the bivariate hazard function}
 \usage{
-biHazards(formula, data = NULL, cluster)
+biHazards(formula, data = NULL)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -12,8 +12,6 @@ operator, and the terms on the right.  The response must be a
 survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
 
 \item{data}{a data.frame containing the variables in the model}
-
-\item{cluster}{Cluster variable}
 }
 \value{
 List with the estimates of the three bivariate hazard functions. Each hazard function is a matrix.

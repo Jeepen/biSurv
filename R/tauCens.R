@@ -5,25 +5,25 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param cluster Cluster variable
 #' @param alpha Significance level
 #' @param method Which estimator to use
 #' @seealso tauPar taucpp
 #' @import stats
+#' @import prodlim 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
 #' @importFrom Rcpp sourceCpp
-tauCens <- function(formula, data = NULL, cluster, alpha = .05, method = "adjusted"){
+tauCens <- function(formula, data = NULL, alpha = .05, method = "adjusted"){
     Call <- match.call()
-    models <- NULL
-    cluster <- eval(substitute(cluster),data)
-    d <- uniTrans(formula, data, cluster)
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     id <- rep(1:length(x),2)
     if(method=="adjusted"){
-        KMx <- prodlim::prodlim(Hist(x, xstatus) ~ 1)
-        KMy <- prodlim::prodlim(Hist(y, ystatus) ~ 1)
+        KMx <- prodlim::prodlim(prodlim::Hist(x, xstatus) ~ 1)
+        KMy <- prodlim::prodlim(prodlim::Hist(y, ystatus) ~ 1)
         tauu <- taucpp(x,y,xstatus,ystatus,KMx$surv,KMy$surv,KMx$time,KMy$time)
         n <- length(x)
         a <- tauu$a
@@ -33,15 +33,11 @@ tauCens <- function(formula, data = NULL, cluster, alpha = .05, method = "adjust
             2 * sum(a^2) * sum(b^2) / (n * (n - 1))
         var.hat <- var.hat / (sum(a^2) * sum(b^2))
         tau <- tauu$tau
-        ## out <- data.frame(tau = tauu$tau, SE = sqrt(var.hat),
-        ##                   lwr = tauu$tau-qnorm(1-alpha/2)*sqrt(var.hat),
-        ##                   upr = tauu$tau+qnorm(1-alpha/2)*sqrt(var.hat))
     }
     else if(method == "naive"){
-        xx <- x[xstatus==1 & ystatus==1]
-        yy <- y[xstatus==1 & ystatus==1]
-        xxstatus <- xstatus[xstatus==1 & ystatus==1]
-        yystatus <- ystatus[xstatus==1 & ystatus==1]
+        obs <- (xstatus==1 & ystatus==1)
+        xx <- x[obs]
+        yy <- y[obs]
         tau <- cor(xx,yy,method="kendall")
         n <- length(xx)
         var.hat <- (2*(2*n+5))/(9*n*(n-1))

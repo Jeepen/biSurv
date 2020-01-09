@@ -5,7 +5,6 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param cluster Cluster variable
 #' @param n Number of steps for empirical CHR
 #' @return Data.frame with ISD for different frailty distributions
 #' @seealso chrCpp
@@ -17,12 +16,13 @@
 #' @import reshape2
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-CHR <- function(formula, data, cluster, n=5){
+CHR <- function(formula, data, n = 5){
     Call <- match.call()
-    cluster <- eval(substitute(cluster),data)
-    d <- uniTrans(formula, data, cluster)
-    S <- dabrowska(formula, data, cluster)
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
+    S <- dabrowska(formula, data)
     if(length(x)!=length(y)){
         stop("Length of x and y differ")
     }
@@ -91,20 +91,42 @@ print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.co
     ## invisible(x)
 }
 
+#' @export
+summary.CHR <- function(object, ...) 
+{
+    cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+        "\n\n", sep = "")
+    gammaDiff <- mean((x$d$Empirical-x$d$Gamma)^2)
+    stableDiff <- mean((x$d$Empirical-x$d$PositiveStable)^2)
+    invgaussDiff <- mean((x$d$Empirical-x$d$InverseGaussian)^2)
+    ans <- data.frame(Distribution = c("Gamma", "Positive stable", "Inverse Gaussian"),
+                      ISD = c(gammaDiff, stableDiff, invgaussDiff))
+    out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
+    rownames(out) <- ans$Distribution[order(ans$ISD)]
+    ## printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
+    ## na.print = "NA", ...)
+    print(out)
+    ## cat("\n")
+    ## invisible(x)
+}
+
+
+
 #' Plot of CHR as a function of the survival function
 #'
 #' @title Plot of CHR as a function of the survival function
-#' @param object An object of class \code{CHR} 
+#' @param x An object of class \code{CHR}
+#' @param ... Further arguments for \code{ggplot}
 #' @return Plot of CHR as a function of the survival function
 #' @seealso chrCpp
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-plotCHR <- function(object){
+plot.CHR <- function(x, ...){
     Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
-    melted <- melt(object$d,id="S")
+    melted <- melt(x$d,id="S")
     colnames(melted)[2] <- "Model"
-    ggplot(melted, aes(x=S,y=value,color=Model)) + geom_line() +
+    ggplot(melted, aes(x=S,y=value,color=Model),...) + geom_line() +
         geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
-        ylab("CHR")   
+        ylab("CHR") + theme_bw()  
 }

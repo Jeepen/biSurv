@@ -5,22 +5,26 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param cluster Cluster variable
 #' @return Data.frame with two vectors of failure times and two vectors of status indicators
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-uniTrans <- function(formula, data = NULL, cluster = NULL){
+uniTrans <- function(formula, data = NULL){
+    X <- model.matrix(formula, data)
     mf <- match.call()
-    cluster <- eval(substitute(cluster),data)
-    m <- match(c("formula", "data", "cluster"), names(mf), 0L)
-    mf[[1L]] <- quote(stats::model.frame)
+    Terms <- terms(formula, "cluster", data = data)
+    mf$formula <- Terms
+    mf[[1]] <- as.name("model.frame")
     mf <- eval(mf, parent.frame())
-    if(ncol(model.matrix(formula, data))>1){
-        m <- coxph(formula, data)
+    m <- grep("cluster", names(mf))
+    if(length(m) != 0) cluster <- mf[,m] else cluster <- NULL
+    Y <- model.extract(mf, "response")
+    if(!is.Surv(Y)) stop("Expected a 'Surv'-object")
+    if(any(X != 1)){
+        m <- coxph(Y ~ X)
         time <- 1-exp(-predict(m,type="expected"))
     }
-    else time <- mf[,1][,1]
-    status <- mf[,1][,2]
+    else time <- Y[,1]
+    status <- Y[,2]
     if(is.null(cluster)){
         data.frame(time, status)
     }

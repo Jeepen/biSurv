@@ -5,16 +5,16 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param cluster Cluster variable
 #' @return List with the estimates of the three bivariate hazard functions. Each hazard function is a matrix.
 #' @seealso hazardscpp dabrowska
 #' @import Rfast
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-biHazards <- function(formula, data = NULL, cluster){
+biHazards <- function(formula, data = NULL){
     Call <- match.call()
-    cluster <- eval(substitute(cluster),data)
-    d <- uniTrans(formula, data, cluster)
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)

@@ -5,7 +5,6 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param cluster Cluster variable
 #' @param q Quantile to estimate "tail-dependence" for
 #' @param method How to estimate survival probabilities. Available are 'dabrowska' and 'fast'
 #' @param tail Tail to estimate "tail dependence" for
@@ -16,9 +15,10 @@
 #' @import graphics
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-tailDepCI <- function(formula, data, cluster, q, method = "dabrowska", tail="lwr", n = 1000){
-    cluster <- eval(substitute(cluster),data)
-    d <- uniTrans(formula, data, cluster)
+tailDepCI <- function(formula, data, q, method = "dabrowska", tail="lwr", n = 1000){
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     data <- data.frame(time = c(x,y), status = c(xstatus,ystatus), cluster = rep(1:length(x),2))
     sims <- numeric(n)
@@ -32,13 +32,13 @@ tailDepCI <- function(formula, data, cluster, q, method = "dabrowska", tail="lwr
     quantile(sims, c(.025,.975))
 }
 
-#' @export
 tailDep <- function(formula, data, cluster, q, tail = "lwr", method = "dabrowska"){
     Call <- match.call()
-    cluster <- eval(substitute(cluster),data)
-    Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
-    d <- uniTrans(formula, data, cluster)
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
+    Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
     id <- rep(1:length(x),2)
     if(!(method %in% c("dabrowska","fast"))){
         stop("tail has to be either 'lwr' or 'upr'")
