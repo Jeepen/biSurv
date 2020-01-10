@@ -33,26 +33,31 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
     if(type=="theta"&output=="tau"&dist!="gamma"){
         par <- 1/par
     }
-    switch(dist, gamma={
-        switch(output, tau={
-            par/(2+par)
-        },par={
-            2*par/(1-par)
-        })
-    },posstab=1-par,invgauss={
-        laplace <- function(alpha){
-            L <- function(s) exp(alpha - sqrt(alpha) * sqrt(2*s + alpha))
-            LL <- function(s){
-                exp(alpha) * (-sqrt(alpha)) * (exp(-sqrt(alpha)*sqrt(2*s+alpha))*(-sqrt(alpha)) / (2*s+alpha) -
-                                               exp(-sqrt(alpha)*sqrt(2*s+alpha))*(2*s+alpha)^(-3/2))
+    if(dist == "invgauss" & par > 7e2){
+        0
+    }
+    else{
+        switch(dist, gamma={
+            switch(output, tau={
+                par/(2+par)
+            },par={
+                2*par/(1-par)
+            })
+        },posstab=1-par,invgauss={
+            laplace <- function(alpha){
+                L <- function(s) exp(alpha - sqrt(alpha) * sqrt(2*s + alpha))
+                LL <- function(s){
+                    exp(alpha) * (-sqrt(alpha)) * (exp(-sqrt(alpha)*sqrt(2*s+alpha))*(-sqrt(alpha)) / (2*s+alpha) -
+                                                   exp(-sqrt(alpha)*sqrt(2*s+alpha))*(2*s+alpha)^(-3/2))
+                }
+                f <- function(s) s*L(s)*LL(s)
+                4 * integrate(f, 0, Inf)$value - 1
             }
-            f <- function(s) s*L(s)*LL(s)
-            4 * integrate(f, 0, Inf)$value - 1
-        }
-        switch(output, tau={
-            laplace(par)
-        },par={
-            uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root
+            switch(output, tau={
+                laplace(par)
+            },par={
+                uniroot(function(alpha) laplace(alpha) - par, interval = c(.0001, 100))$root
+            })
         })
-    })
+    }
 }

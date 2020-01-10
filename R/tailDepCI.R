@@ -12,7 +12,6 @@
 #' @param level The confidence level required.
 #' @return CI for "tail dependence"
 #' @seealso tailDep
-#' @import boot
 #' @import graphics
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

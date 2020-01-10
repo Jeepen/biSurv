@@ -8,6 +8,7 @@
 #' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula 
 #' @return Test statistic, SE and p-value for independence test.
 #' @seealso biHazards
+#' @importFrom survival Surv
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 independenceTest <- function(formula, data = NULL, weight = "independence"){
