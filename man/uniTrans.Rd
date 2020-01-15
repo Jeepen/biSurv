@@ -7,17 +7,22 @@
 uniTrans(formula, data = NULL)
 }
 \arguments{
-\item{formula}{a formula object, with the response on the left of a ~
+\item{formula}{A formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
-survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
+survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.}
 
-\item{data}{a data.frame containing the variables in the model}
+\item{data}{A data.frame containing the variables in the model.}
 }
 \value{
 Data.frame with two vectors of failure times and two vectors of status indicators
 }
 \description{
 Transform survival data into uniform marginals using a Cox proportional hazards model
+}
+\details{
+Transforms event times to uniform marginals using a Cox model. This is convenient if
+you want to analyze your data taking covariates into account. If formula doesn't contain any
+covariates, the function just returns the original data split up in different columns.
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

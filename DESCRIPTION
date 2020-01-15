@@ -5,7 +5,7 @@ Version: 1.0
 Date: 2019-02-14
 Author: Jeppe E. H. Madsen
 Maintainer: Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-Description: Survival function estimator(s), dependence measures for bivariate survival data, and tools to help determine if given frailty model is a good choice.
+Description: This package is for anyone who works with bivariate survival data. It can be used for test of independence and choice of frailty model and more. 
 License: GPL (>= 3)
 Depends:
     survival (>= 3.1.8) 
@@ -14,10 +14,8 @@ Imports:
     Rfast (>= 1.9.8),  
     frailtyEM (>= 1.0.1), 
     ggplot2 (>= 3.2.1), 
-    graphics,
     prodlim, 
-    reshape2, 
-    stats (>= 3.6.2)
+    reshape2
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,

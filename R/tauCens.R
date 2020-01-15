@@ -45,16 +45,16 @@ tauCens <- function(formula, data = NULL, alpha = .05, method = "adjusted"){
     else{
         stop("method has to be either 'adjusted' or 'naive'")
     }
-    gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))
-    theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1] 
-    stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame(),
-                      control = emfrail_control(se = F, lik_ci = F, ca_test = F))
+    gamma <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), data=data.frame())
+    theta <- 1/exp(gamma$logtheta)
+    stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame())
     alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
-    invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame(),
-                        control = emfrail_control(se = F, lik_ci = F, ca_test = F))
-    alpha2 <- exp(invgauss$logtheta)
+    se <- c(sqrt(var.hat), sqrt(gamma$var_logtheta) * 2*exp(gamma$logtheta) / ((1 + 2*exp(gamma$logtheta))^2),
+            sqrt(stable$var_logtheta) * abs(exp(stable$logtheta)/(1+exp(stable$logtheta))-exp(2*stable$logtheta)/((1+exp(stable$logtheta))^2)), NA)
+    invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame())
+    alpha2 <- exp(invgauss$logtheta) 
     models <- c(tauPar(theta), tauPar(alpha1,dist="posstab"), tauPar(alpha2,dist="invgauss"))
-    out <- list(call = Call, coefficients = tau, se = sqrt(var.hat), models = models)
+    out <- list(call = Call, coefficients = tau, se = se, models = models)
     class(out) <- "tauCens"
     out
 }
@@ -66,7 +66,8 @@ print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symboli
     cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
         "\n\n", sep = "")
     coefficients <- c(x$coefficients, x$models)
-    se <- c(x$se,rep(NA,3))
+    ## se <- c(x$se,rep(NA,3))
+    se <- x$se
     coefs <- cbind(Estimate = coefficients, `Std. Error` = se, 
                    `lwr` = coefficients - 1.96 * se, `upr` = coefficients + 1.96 * se)
     rownames(coefs) <- c("Empirical", "Gamma", "Positive stable", "Inverse Gaussian")

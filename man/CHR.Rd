@@ -2,24 +2,30 @@
 % Please edit documentation in R/CHR.R
 \name{CHR}
 \alias{CHR}
-\title{Integrated squared distance (ISD) between empirical and theoretical CHRs}
+\title{Integrated squared distance (ISD) between empirical and theoretical CHRs.}
 \usage{
 CHR(formula, data, n = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
-survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
+survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.}
 
-\item{data}{a data.frame containing the variables in the model}
+\item{data}{a data.frame containing the variables in the model.}
 
-\item{n}{Number of steps for empirical CHR}
+\item{n}{Number of steps for empirical CHR.}
 }
 \value{
-Data.frame with ISD for different frailty distributions
+Data.frame with ISD for different frailty distributions.
 }
 \description{
 Integrated squared distance (ISD) between empirical and theoretical CHRs
+}
+\details{
+The CHR and the bivariate survival function are estimated seperately.
+The ISD between the empirical CHR (as a function of the bivariate survival function)
+and the ones implied by the different frailty models, is estimated.
+The function returns the estimates sorted from lowest (best) to highest (worst).
 }
 \references{
 Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.

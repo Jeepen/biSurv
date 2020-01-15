@@ -27,7 +27,7 @@ independenceTest <- function(formula, data = NULL, weight = "independence"){
         weight <- m1$surv %o% m2$surv
     }
     else if(weight == "dabrowska"){
-        weight <- dabrowska(formula, data)$S
+        weight <- dabrowska(formula, data)$surv
     }
     else if(weight == "atRisk"){
         weight <- eyy

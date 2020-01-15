@@ -9,7 +9,7 @@ tailDependencePlot(
   data,
   q = seq(0.1, 0.2, 0.005),
   tail = "lwr",
-  method = "dabrowska"
+  method = "fast"
 )
 }
 \arguments{

@@ -2,20 +2,27 @@
 % Please edit documentation in R/CHR.R
 \name{plot.CHR}
 \alias{plot.CHR}
-\title{Plot of CHR as a function of the survival function}
+\title{Plot of CHR as a function of the survival function.}
 \usage{
 \method{plot}{CHR}(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{CHR}}
+\item{x}{An object of class \code{CHR}.}
 
-\item{...}{Further arguments for \code{ggplot}}
+\item{...}{Further arguments for \code{ggplot}.}
 }
 \value{
-Plot of CHR as a function of the survival function
+Plot of CHR as a function of the survival function.
 }
 \description{
 Plot of CHR as a function of the survival function
+}
+\details{
+The CHR and the bivariate survival function are estimated seperately.
+Plotting the CHR as a function of the bivariate survival function tells us something about
+where in the data the dependence is strongest. Is it for small failure times
+(where the survival function is big), as implied by the positive stable model,
+or is it for late failure times as implied by the gamma frailty model?
 }
 \references{
 Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
