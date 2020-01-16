@@ -26,45 +26,39 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
     if(!(tail %in% c("lwr","upr"))){
         stop("tail has to be either 'lwr' or 'upr'")
     }
-    switch(method, dabrowska={
-        xuni <- sort_unique(x)
-        yuni <- sort_unique(y)
+    xuni <- sort_unique(x)
+    yuni <- sort_unique(y)
+    if(method == "dabrowska"){
         haz <- biHazards(formula, data)
         H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
         H[is.nan(H)] <- 0
-        KMx <- prodlim(Hist(x,xstatus) ~ 1)
-        KMy <- prodlim(Hist(y,ystatus) ~ 1)
-        Fx <- 1 - KMx$surv
-        Fy <- 1 - KMy$surv
-        switch(tail, lwr={
-            qx <- min(KMx$time[Fx >= q])
-            qy <- min(KMy$time[Fy >= q])
-            prob <- KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])
+        KMx <- KaplanMeier(x,xstatus)
+        KMy <- KaplanMeier(y,ystatus)
+        Fx <- 1 - KMx
+        Fy <- 1 - KMy
+        indx <- match(1, Fx >= q)
+        indy <- match(1, Fy >= q)
+        qx <- xuni[indx]
+        qy <- yuni[indy]
+        if(tail == "lwr"){
+            prob <- KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])
             out <- (2*q - 1 + prob) / q
-        },upr={
-            qx <- min(KMx$time[Fx >= q])
-            qy <- min(KMy$time[Fy >= q])
-            out <- (KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
-        })
-    },fast={
-        KMy <- prodlim(Hist(y, ystatus) ~ 1)
-        FF <- 1-KMy$surv
-        qq <- min(KMy$time[FF >= q])
-        switch(tail, lwr={
-            xx <- x[y < qq & ystatus == 1]
-            xxstatus <- xstatus[y < qq & ystatus == 1]
-        },upr={
-            xx <- x[y > qq]
-            xxstatus <- xstatus[y > qq]
-        })
-        KMx <- prodlim(Hist(xx, xxstatus) ~ 1)
-        switch(tail, lwr={
-            Fx <- 1-KMx$surv
-            out <- max(Fx[KMx$time < qq])
-        },upr={
-            out <- max(KMx$surv[KMx$time > qq])
-        })  
-    })
+        }
+        else{
+            out <- (KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
+        }
+    }
+    else{
+        KMy <- KaplanMeier(y, ystatus)
+        FF <- 1 - KMy
+        qq <- yuni[match(1, FF >= q)]
+        ifelse(tail == "lwr", indy <- (y <= qq & ystatus == 1), indy <- y > qq) 
+        xx <- x[indy]
+        xxstatus <- xstatus[indy]
+        KMx <- KaplanMeier(xx, xxstatus)
+        Fx <- 1 - KMx
+        ifelse(tail == "lwr", out <- Fx[match(1, xuni >= qq) - 1], out <- KMx[match(1, xuni >= qq)])
+    }
     if(out < 0 | out > 1){
         stop("q is too close to either 0 or 1")
     }
@@ -88,6 +82,7 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
     ans
 }
 
+    
 #' Bootstrapped confidence interval for "tail dependence"
 #'
 #' @title Bootstrapped confidence interval for "tail dependence"
@@ -140,15 +135,15 @@ tailDepCI <- function(formula, data, q, method = "fast", tail="lwr", n = 1000, l
 
 #' Function that plots the "tail-dependence" as a function of the chosen quantile
 #'
-#' @title Function that plots the "tail-dependence" as a function of the chosen quantile
+#' @title Function that plots the "tail-dependence" as a function of the chosen quantile.
 #' @param formula a formula object, with the response on the left of a ~
 #'          operator, and the terms on the right.  The response must be a
-#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
-#' @param data a data.frame containing the variables in the model
-#' @param q Quantiles to estimate "tail-dependence" for
-#' @param tail Tail to estimate "tail dependence" for
-#' @param method What estimator to use
-#' @return Plot of "tail-dependence" as a function of the quantile; estimated and implied by frailty models
+#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.
+#' @param data a data.frame containing the variables in the model.
+#' @param q Quantiles to estimate "tail-dependence" for.
+#' @param tail Tail to estimate "tail dependence" for ("lwr" or "upr").
+#' @param method What estimator to use. Can either be "fast" or "dabrowska".
+#' @return Plot of "tail-dependence" as a function of the quantile; estimated and implied by frailty models.
 #' @seealso tailDepCI tailDependence
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
@@ -175,12 +170,11 @@ tailDependencePlot <- function(formula, data, q = seq(.1,.2,.005), tail = "lwr",
     out <- reshape2::melt(out)
     out <- cbind(out, q)
     names(out[,"Var2"]) <- "Distribution"
-    ggplot(mapping = aes(x=q, y=value, group=Var2, colour = Var2), data = out) +
+    ggplot(mapping = aes(x = .data$q, y = .data$value, group = .data$Var2, colour = .data$Var2), data = out) +
         geom_line() + theme_bw() + xlab("Quantile") + ylab("Tail dependence")
 }
 
 tailDep <- function(formula, data, q, tail = "lwr", method = "fast"){
-    Call <- match.call()
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
@@ -188,50 +182,44 @@ tailDep <- function(formula, data, q, tail = "lwr", method = "fast"){
     Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
     id <- rep(1:length(x),2)
     if(!(method %in% c("dabrowska","fast"))){
-        stop("tail has to be either 'lwr' or 'upr'")
+        stop("method has to be either 'dabrowska' or 'fast'")
     }
     if(!(tail %in% c("lwr","upr"))){
         stop("tail has to be either 'lwr' or 'upr'")
     }
-    switch(method, dabrowska={
-        xuni <- sort_unique(x)
-        yuni <- sort_unique(y)
+    xuni <- sort_unique(x)
+    yuni <- sort_unique(y)
+    if(method == "dabrowska"){
         haz <- biHazards(formula, data)
         H <- (haz$lambda10 * haz$lambda01 - haz$lambda11) / ((1 - haz$lambda10) * (1 - haz$lambda01))
         H[is.nan(H)] <- 0
-        KMx <- prodlim(Hist(x,xstatus) ~ 1)
-        KMy <- prodlim(Hist(y,ystatus) ~ 1)
-        Fx <- 1 - KMx$surv
-        Fy <- 1 - KMy$surv
-        switch(tail, lwr={
-            qx <- min(KMx$time[Fx >= q])
-            qy <- min(KMy$time[Fy >= q])
-            prob <- KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])
+        KMx <- KaplanMeier(x,xstatus)
+        KMy <- KaplanMeier(y,ystatus)
+        Fx <- 1 - KMx
+        Fy <- 1 - KMy
+        indx <- match(1, Fx >= q)
+        indy <- match(1, Fy >= q)
+        qx <- xuni[indx]
+        qy <- yuni[indy]
+        if(tail == "lwr"){
+            prob <- KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])
             out <- (2*q - 1 + prob) / q
-        },upr={
-            qx <- min(KMx$time[Fx >= q])
-            qy <- min(KMy$time[Fy >= q])
-            out <- (KMx$surv[KMx$time == qx] * KMy$surv[KMy$time == qy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
-        })
-    },fast={
-        KMy <- prodlim(Hist(y, ystatus) ~ 1)
-        FF <- 1-KMy$surv
-        qq <- min(KMy$time[FF >= q])
-        switch(tail, lwr={
-            xx <- x[y < qq & ystatus == 1]
-            xxstatus <- xstatus[y < qq & ystatus == 1]
-        },upr={
-            xx <- x[y > qq]
-            xxstatus <- xstatus[y > qq]
-        })
-        KMx <- prodlim(Hist(xx, xxstatus) ~ 1)
-        switch(tail, lwr={
-            Fx <- 1-KMx$surv
-            out <- max(Fx[KMx$time < qq])
-        },upr={
-            out <- max(KMx$surv[KMx$time > qq])
-        })  
-    })
+        }
+        else{
+            out <- (KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
+        }
+    }
+    else{
+        KMy <- KaplanMeier(y, ystatus)
+        FF <- 1 - KMy
+        qq <- yuni[match(1, FF >= q)]
+        ifelse(tail == "lwr", indy <- (y <= qq & ystatus == 1), indy <- y > qq) 
+        xx <- x[indy]
+        xxstatus <- xstatus[indy]
+        KMx <- KaplanMeier(xx, xxstatus)
+        Fx <- 1 - KMx
+        ifelse(tail == "lwr", out <- Fx[match(1, xuni >= qq) - 1], out <- KMx[match(1, xuni >= qq)])
+    }
     if(out < 0 | out > 1){
         stop("q is too close to either 0 or 1")
     }

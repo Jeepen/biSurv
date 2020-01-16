@@ -12,16 +12,13 @@
 \item{...}{Further arguments for \code{ggplot}.}
 }
 \value{
-Contour plot of bivariate survival function.
+Contour plot of estimate of bivariate survival function along with contour plot of independence estimate of bivariate survival function.
 }
 \description{
 Contour plot of the Dabrowska estimate of the bivariate survival function
 }
-\references{
-Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
-}
 \seealso{
-dabrowska
+dabrowska print.dabrowska
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

@@ -7,6 +7,9 @@
 #' @param data a data.frame containing the variables in the model
 #' @return Matrix with Dabrowska estimate of the bivariate survival function
 #' @importFrom Rfast sort_unique
+#' @examples
+#' data(kidney)
+#' dabrowska(Surv(time,status) ~ age + sex + disease + cluster(id), data = kidney)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 dabrowska <- function(formula, data){
@@ -57,7 +60,7 @@ print.dabrowska <- function(x, digits = max(3L, getOption("digits") - 3L), symbo
 #' @param x An object of class \code{dabrowska}.
 #' @param ... Further arguments for \code{ggplot}.
 #' @return Contour plot of estimate of bivariate survival function along with contour plot of independence estimate of bivariate survival function.  
-#' @seealso dabrowska
+#' @seealso dabrowska print.dabrowska 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 plot.dabrowska <- function(x, ...){
@@ -67,7 +70,6 @@ plot.dabrowska <- function(x, ...){
 }
 
     
-#' @export
 biHazards <- function(formula, data = NULL){
     Call <- match.call()
     d <- uniTrans(formula, data)
@@ -83,8 +85,6 @@ biHazards <- function(formula, data = NULL){
     h
 }
 
-
-#' @export
 KaplanMeier <- function(time, status){
     t <- sort_unique(time)
     Y <- sapply(t, function(x) sum(time>=x))

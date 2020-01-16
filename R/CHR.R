@@ -27,19 +27,19 @@ CHR <- function(formula, data, n = 5){
         stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     S <- dabrowska(formula, data)
-    if(length(x)!=length(y)){
+    if(length(x) != length(y)){
         stop("Length of x and y differ")
     }
-    if(length(xstatus)!=length(ystatus)){
+    if(length(xstatus) != length(ystatus)){
         stop("Length of xstatus and ystatus differ")
     }
     n0 <- length(x)
-    condis <- chrCpp(x,y,xstatus,ystatus)
+    condis <- chrCpp(x, y, xstatus, ystatus)
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)
-    xmin <- outer(x,x,FUN="pmin")
-    ymin <- outer(y,y,FUN="pmin")
-    SS <- matrix(NA,n0,n0)
+    xmin <- outer(x, x, FUN="pmin")
+    ymin <- outer(y, y, FUN="pmin")
+    SS <- matrix(NA, n0, n0)
     for(i in 2:n0){
         for(j in 1:(i-1)){
             SS[i,j] <- S$surv[xuni == xmin[i,j], yuni == ymin[i,j]]
@@ -51,25 +51,25 @@ CHR <- function(formula, data, n = 5){
         out[i] <- sum(condis$c[SS > breaks[i] & SS < breaks[i+1]], na.rm = T) /
             sum(condis$d[SS > breaks[i] & SS < breaks[i+1]], na.rm = T)
     }
-    emp <-  rep(out, c(rep(100/n, n-1), 97-(n-1)/n*100))
+    emp <-  rep(out, c(rep(100/n, n-1), 96-(n-1)/n*100))
     time <- c(x,y)
     status <- c(xstatus,ystatus)
     id <- rep(1:length(x),2)
     gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))
     theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1]
-    gammaCHR <- rep(1+theta, 97)
+    gammaCHR <- rep(1+theta, 96)
     ## gammaDiff <- mean((emp-gammaCHR)^2)
     stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame(),
                       control = emfrail_control(se = F, lik_ci = F, ca_test = F))
     alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
-    stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.97,.01)))
+    stableCHR <- 1-(1-alpha1)/(alpha1*log(seq(.01,.96,.01)))
     ## stableDiff <- mean((emp-stableCHR)^2)
     invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame(),
                         control = emfrail_control(se = F, lik_ci = F, ca_test = F))
     alpha2 <- exp(invgauss$logtheta)
-    invgaussCHR <- 1+1/(alpha2-log(seq(.01,.97,.01)))
+    invgaussCHR <- 1+1/(alpha2-log(seq(.01,.96,.01)))
     ## invgaussDiff <- mean((emp-invgaussCHR)^2)
-    d <- list(call = Call, d = data.frame(S = seq(.01,.97,.01), Empirical = emp, Gamma = gammaCHR,
+    d <- list(call = Call, d = data.frame(S = seq(.01,.96,.01), Empirical = emp, Gamma = gammaCHR,
                                           PositiveStable = stableCHR, InverseGaussian=invgaussCHR))
     class(d) <- "CHR"
     d
@@ -87,11 +87,7 @@ print.CHR <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.co
                       ISD = c(gammaDiff, stableDiff, invgaussDiff))
     out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
     rownames(out) <- ans$Distribution[order(ans$ISD)]
-    ## printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
-    ## na.print = "NA", ...)
     print(out)
-    ## cat("\n")
-    ## invisible(x)
 }
 
 #' @export
@@ -105,11 +101,8 @@ summary.CHR <- function(object, ...){
                       ISD = c(gammaDiff, stableDiff, invgaussDiff))
     out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
     rownames(out) <- ans$Distribution[order(ans$ISD)]
-    ## printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
-    ## na.print = "NA", ...)
     print(out)
-    ## cat("\n")
-    ## invisible(x)
+
 }
 
 #' Plot of CHR as a function of the survival function
@@ -131,8 +124,8 @@ plot.CHR <- function(x, ...){
     Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
     melted <- melt(x$d,id="S")
     colnames(melted)[2] <- "Model"
-    ggplot(melted, aes(x=S,y=value,color=Model),...) + geom_line() +
-        geom_hline(aes(yintercept=1),linetype=2) + xlab(expression(S(t[1],t[2]))) +
+    ggplot(melted, aes(x = .data$S, y = .data$value, color = .data$Model), ...) + geom_line() +
+        geom_hline(aes(yintercept = 1), linetype = 2) + xlab(expression(S(t[1], t[2]))) +
         ylab("CHR") + theme_bw()  
 }
 

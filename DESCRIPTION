@@ -14,7 +14,6 @@ Imports:
     Rfast (>= 1.9.8),  
     frailtyEM (>= 1.0.1), 
     ggplot2 (>= 3.2.1), 
-    prodlim, 
     reshape2
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 

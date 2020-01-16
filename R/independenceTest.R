@@ -8,6 +8,7 @@
 #' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula 
 #' @return Test statistic, SE and p-value for independence test.
 #' @seealso biHazards
+#' @import stats
 #' @importFrom survival Surv
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
@@ -36,8 +37,7 @@ independenceTest <- function(formula, data = NULL, weight = "independence"){
         weight <- matrix(weight, nrow = nu1, ncol = nu2)
     }
     else{
-        stop("'weight' has to be either 'independence', 'dabrowska', 'atRisk', a number or
-a matrix")
+        stop("'weight' has to be either 'independence', 'dabrowska', 'atRisk', a number or a matrix")
     }
     cumhaz1 <- m1$cumhaz
     cumhaz2 <- m2$cumhaz
@@ -77,7 +77,8 @@ print.independenceTest <- function(x, digits = max(3L, getOption("digits") - 3L)
 }
 
 #' @export
-summary.independenceTest <- function(object, ...) 
+summary.independenceTest <- function(object, digits = max(3L, getOption("digits") - 3L), symbolic.cor = object$symbolic.cor, 
+    signif.stars = getOption("show.signif.stars"), ...) 
 {
     cat("\nCall:\n", paste(deparse(object$call), sep = "\n", collapse = "\n"), 
         "\n\n", sep = "")

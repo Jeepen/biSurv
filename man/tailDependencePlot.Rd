@@ -2,7 +2,7 @@
 % Please edit documentation in R/tailDependence.R
 \name{tailDependencePlot}
 \alias{tailDependencePlot}
-\title{Function that plots the "tail-dependence" as a function of the chosen quantile}
+\title{Function that plots the "tail-dependence" as a function of the chosen quantile.}
 \usage{
 tailDependencePlot(
   formula,
@@ -15,18 +15,18 @@ tailDependencePlot(
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
 operator, and the terms on the right.  The response must be a
-survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term}
+survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.}
 
-\item{data}{a data.frame containing the variables in the model}
+\item{data}{a data.frame containing the variables in the model.}
 
-\item{q}{Quantiles to estimate "tail-dependence" for}
+\item{q}{Quantiles to estimate "tail-dependence" for.}
 
-\item{tail}{Tail to estimate "tail dependence" for}
+\item{tail}{Tail to estimate "tail dependence" for ("lwr" or "upr").}
 
-\item{method}{What estimator to use}
+\item{method}{What estimator to use. Can either be "fast" or "dabrowska".}
 }
 \value{
-Plot of "tail-dependence" as a function of the quantile; estimated and implied by frailty models
+Plot of "tail-dependence" as a function of the quantile; estimated and implied by frailty models.
 }
 \description{
 Function that plots the "tail-dependence" as a function of the chosen quantile
