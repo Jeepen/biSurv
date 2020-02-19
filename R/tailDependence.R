@@ -14,18 +14,36 @@
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
     Call <- match.call()
-    d <- uniTrans(formula, data)
-    if(ncol(d) != 4)
-        stop("RHS needs a 'cluster(id)' element")
-    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
-    Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
-    id <- rep(1:length(x),2)
     if(!(method %in% c("dabrowska","fast"))){
         stop("method has to be either 'dabrowska' or 'fast'")
     }
     if(!(tail %in% c("lwr","upr"))){
         stop("tail has to be either 'lwr' or 'upr'")
     }
+    ## Models
+    gamma <- emfrail(formula = formula, data = data, control = emfrail_control(se = F, lik_ci = F, ca_test = F))
+    ## theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1]
+    theta <- 1 / exp(gamma$logtheta)
+    out <- switch(tail,lwr=((2*(1-q)^(-theta) - 1)^(-1/theta) + 2*q - 1) / q,
+                        upr=(2*(1-q)^(-theta)-1)^(-1/theta)/ (1-q))    
+    stable <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="stable"),
+                      control = emfrail_control(se = F, lik_ci = F, ca_test = F))
+    alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
+    out <- c(out,switch(tail,lwr=(exp(-(2*(-log(1-q))^(1/alpha1))^alpha1)+2*q-1)/q,
+                        upr=exp(-(2*(-log(1-q))^(1/alpha1))^alpha1)/(1-q)))
+    invgauss <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="pvf"), 
+                        control = emfrail_control(se = F, lik_ci = F, ca_test = F))
+    alpha2 <- exp(invgauss$logtheta)
+    out <- c(out,switch(tail,
+                        lwr=(exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)+2*q-1)/q,
+                        upr=exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)/(1-q)))
+    ## Non-parametric estimate
+    d <- uniTrans(formula, data)
+    if(ncol(d) != 4)
+        stop("RHS needs a 'cluster(id)' element")
+    x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
+    Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
+    id <- rep(1:length(x),2)
     xuni <- sort_unique(x)
     yuni <- sort_unique(y)
     if(method == "dabrowska"){
@@ -42,10 +60,10 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
         qy <- yuni[indy]
         if(tail == "lwr"){
             prob <- KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])
-            out <- (2*q - 1 + prob) / q
+            out <- c((2*q - 1 + prob) / q, out)
         }
         else{
-            out <- (KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q)
+            out <- c((KMx[indx] * KMy[indy] * prod(1 - H[xuni <= qx, yuni <= qy])) / (1 - q), out)
         }
     }
     else{
@@ -57,26 +75,11 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
         xxstatus <- xstatus[indy]
         KMx <- KaplanMeier(xx, xxstatus)
         Fx <- 1 - KMx
-        ifelse(tail == "lwr", out <- Fx[match(1, xuni >= qq) - 1], out <- KMx[match(1, xuni >= qq)])
+        ifelse(tail == "lwr", out <- c(Fx[match(1, xuni >= qq) - 1], out), out <- c(KMx[match(1, xuni >= qq)], out))
     }
-    if(out < 0 | out > 1){
+    if(out[1] < 0 | out[1] > 1){
         stop("q is too close to either 0 or 1")
     }
-    gamma <- coxph(Surv(c(x,y),c(xstatus,ystatus)) ~ frailty(id))
-    theta <- gamma$history$`frailty(id)`$history[gamma$iter[1],1]
-    out <- c(out,switch(tail,lwr=((2*(1-q)^(-theta) - 1)^(-1/theta) + 2*q - 1) / q,
-                        upr=(2*(1-q)^(-theta)-1)^(-1/theta)/ (1-q)))    
-    stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame(),
-                      control = emfrail_control(se = F, lik_ci = F, ca_test = F))
-    alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
-    out <- c(out,switch(tail,lwr=(exp(-(2*(-log(1-q))^(1/alpha1))^alpha1)+2*q-1)/q,
-                        upr=exp(-(2*(-log(1-q))^(1/alpha1))^alpha1)/(1-q)))
-    invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame(),
-                        control = emfrail_control(se = F, lik_ci = F, ca_test = F))
-    alpha2 <- exp(invgauss$logtheta)
-    out <- c(out,switch(tail,
-                        lwr=(exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)+2*q-1)/q,
-                        upr=exp(alpha2-(alpha2^2+2*log(1-q)*(log(1-q)-2*alpha2))^.5)/(1-q)))
     ans <- data.frame(Distribution = Names, TailDependence = out)
     colnames(ans) <- c("Distribution", "Tail dependence")
     ans

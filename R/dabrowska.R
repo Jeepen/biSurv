@@ -38,7 +38,7 @@ dabrowska <- function(formula, data){
         t02 <- Inf
         medsurv <- est[length(xuni),length(yuni)]
     }
-    medCon <- 4*medsurv - 1
+    medCon <- 4 * medsurv - 1
     out <- list(call = Call, surv = est, timex = xuni, timey = yuni,
                 indep = indep, n = nrow(data), n.events = sum(xstatus+ystatus),
                 medsurv = medsurv, medCon = medCon, median1 = t01, median2 = t02)

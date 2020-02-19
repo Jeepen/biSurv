@@ -14,7 +14,9 @@ Imports:
     Rfast (>= 1.9.8),  
     frailtyEM (>= 1.0.1), 
     ggplot2 (>= 3.2.1), 
-    reshape2
+    reshape2 (>= 1.4.3),
+    stabledist (>= 0.7-1),
+    statmod (>= 1.4.33)
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: 
     knitr,

@@ -14,6 +14,13 @@
 #' @importFrom Rcpp sourceCpp
 tauCens <- function(formula, data = NULL, alpha = .05, method = "adjusted"){
     Call <- match.call()
+    gamma <- emfrail(formula = formula, data = data)
+    theta <- 1/exp(gamma$logtheta)
+    stable <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="stable"))
+    alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
+    invgauss <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="pvf"))
+    alpha2 <- exp(invgauss$logtheta) 
+    models <- c(tauPar(theta), tauPar(alpha1,dist="posstab"), tauPar(alpha2,dist="invgauss"))
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
@@ -43,16 +50,9 @@ tauCens <- function(formula, data = NULL, alpha = .05, method = "adjusted"){
     else{
         stop("method has to be either 'adjusted' or 'naive'")
     }
-    gamma <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), data=data.frame())
-    theta <- 1/exp(gamma$logtheta)
-    stable <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="stable"), data=data.frame())
-    alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
     se <- c(sqrt(var.hat), sqrt(gamma$var_logtheta) * 2*exp(gamma$logtheta) / ((1 + 2*exp(gamma$logtheta))^2),
             sqrt(stable$var_logtheta) * abs(exp(stable$logtheta)/(1+exp(stable$logtheta))-exp(2*stable$logtheta)/((1+exp(stable$logtheta))^2)),
             NA)
-    invgauss <- emfrail(Surv(c(x,y),c(xstatus,ystatus)) ~ cluster(id), distribution=emfrail_dist(dist="pvf"), data=data.frame())
-    alpha2 <- exp(invgauss$logtheta) 
-    models <- c(tauPar(theta), tauPar(alpha1,dist="posstab"), tauPar(alpha2,dist="invgauss"))
     out <- list(call = Call, coefficients = c(tau,models), se = se)
     class(out) <- "tauCens"
     out
