@@ -102,7 +102,6 @@ summary.CHR <- function(object, ...){
     out <- data.frame(ISD = ans$ISD[order(ans$ISD)])
     rownames(out) <- ans$Distribution[order(ans$ISD)]
     print(out)
-
 }
 
 #' Plot of CHR as a function of the survival function

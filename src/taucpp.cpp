@@ -3,10 +3,10 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
-Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector xstatus, 
-            Rcpp::NumericVector ystatus, Rcpp::NumericVector KMxsurv, 
-            Rcpp::NumericVector KMysurv, Rcpp::NumericVector KMxtime, 
-            Rcpp::NumericVector KMytime){
+Rcpp::List taucpp2(const arma::vec &x, const arma::vec &y, const arma::vec &xstatus, 
+            const arma::vec &ystatus, const arma::vec &KMxsurv, 
+		   const arma::vec &KMysurv, const arma::vec &KMxtime, 
+            const arma::vec &KMytime){
   int n = x.size();
   Rcpp::NumericMatrix a(n);
   Rcpp::NumericMatrix b(n);
@@ -16,41 +16,37 @@ Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVec
         a(i,j) = (x(i) > x(j)) - (x(i) < x(j));
       }
       else if((xstatus(i) == 0) & (xstatus(j) == 1)){
-        Rcpp::NumericVector helperj = KMxsurv[KMxtime == x(j)];
-        Rcpp::NumericVector helperi = KMxsurv[KMxtime == x(i)];
         a(i,j) = (x(i) >= x(j)) + (x(i) < x(j)) *
-	        (2 * sum(helperj) / sum(helperi) - 1);
+	  (2 * as_scalar(KMxsurv(find(KMxtime == x(j)))) / 
+	   as_scalar(KMxsurv(find(KMxtime == x(i)))) - 1);
       }
       else if((xstatus(i) == 1) & (xstatus(j) == 0)){
-        Rcpp::NumericVector helperj = KMxsurv[KMxtime == x(j)];
-        Rcpp::NumericVector helperi = KMxsurv[KMxtime == x(i)];
-        a(i,j) = (x(i) > x(j)) * (1 - 2 * sum(helperi) / sum(helperj)) - (x(i) <= x(j));
+        a(i,j) = (x(i) > x(j)) * (1 - 2 * as_scalar(KMxsurv(find(KMxtime == x(i)))) / 
+				  as_scalar(KMxsurv(find(KMxtime == x(j))))) - (x(i) <= x(j));
       }
       else{
-        Rcpp::NumericVector helperj = KMxsurv[KMxtime == x(j)];
-        Rcpp::NumericVector helperi = KMxsurv[KMxtime == x(i)];
-        a(i,j) = (x(i) > x(j)) * (1 - sum(helperi) / sum(helperj)) + (x(i) < x(j)) * 
-	        (sum(helperi) / sum(helperj) - 1);
+        a(i,j) = (x(i) > x(j)) * (1 - as_scalar(KMxsurv(find(KMxtime == x(i)))) / 
+				  as_scalar(KMxsurv(find(KMxtime == x(j))))) + (x(i) < x(j)) * 
+	        (as_scalar(KMxsurv(find(KMxtime == x(i)))) / 
+		 as_scalar(KMxsurv(find(KMxtime == x(j)))) - 1);
       }
 
       if((ystatus(i) == 1) & (ystatus(j) == 1)){
         b(i,j) = (y(i) > y(j)) - (y(i) < y(j));
       }
       else if((ystatus(i) == 0) & (ystatus(j) == 1)){
-        Rcpp::NumericVector helperj = KMysurv[KMytime == y(j)];
-        Rcpp::NumericVector helperi = KMysurv[KMytime == y(i)];
-        b(i,j) = (y(i) >= y(j)) + (y(i) < y(j)) * (2 * sum(helperj) / sum(helperi) - 1);
+        b(i,j) = (y(i) >= y(j)) + (y(i) < y(j)) * 
+	  (2 * as_scalar(KMysurv(find(KMytime == y(j)))) / 
+	   as_scalar(KMysurv(find(KMytime == y(i)))) - 1);
       }
       else if((ystatus(i) == 1) & (ystatus(j) == 0)){
-        Rcpp::NumericVector helperj = KMysurv[KMytime == y(j)];
-        Rcpp::NumericVector helperi = KMysurv[KMytime == y(i)];
-        b(i,j) = (y(i) > y(j)) * (1 - 2 * sum(helperi) / sum(helperj)) - (y(i) <= y(j));
+        b(i,j) = (y(i) > y(j)) * (1 - 2 * as_scalar(KMysurv(find(KMytime == y(i)))) / 
+				  as_scalar(KMysurv(find(KMytime == y(j))))) - (y(i) <= y(j));
       }
       else{
-        Rcpp::NumericVector helperj = KMysurv[KMytime == y(j)];
-        Rcpp::NumericVector helperi = KMysurv[KMytime == y(i)];
-        b(i,j) = (y(i) > y(j)) * (1 - sum(helperi) / sum(helperj)) + (y(i) < y(j)) * 
-          (sum(helperi) / sum(helperj) - 1);
+        b(i,j) = (y(i) > y(j)) * (1 - as_scalar(KMysurv(find(KMytime == y(i)))) / 
+				  as_scalar(KMysurv(find(KMytime == y(j))))) + (y(i) < y(j)) * 
+          (as_scalar(KMysurv(find(KMytime == y(i)))) / as_scalar(KMysurv(find(KMytime == y(j)))) - 1);
       }
     }
   }
