@@ -67,19 +67,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // taucpp
-Rcpp::List taucpp(Rcpp::NumericVector x, Rcpp::NumericVector y, Rcpp::NumericVector xstatus, Rcpp::NumericVector ystatus, Rcpp::NumericVector KMxsurv, Rcpp::NumericVector KMysurv, Rcpp::NumericVector KMxtime, Rcpp::NumericVector KMytime);
+Rcpp::List taucpp(const arma::vec& x, const arma::vec& y, const arma::vec& xstatus, const arma::vec& ystatus, const arma::vec& KMxsurv, const arma::vec& KMysurv, const arma::vec& KMxtime, const arma::vec& KMytime);
 RcppExport SEXP _biSurv_taucpp(SEXP xSEXP, SEXP ySEXP, SEXP xstatusSEXP, SEXP ystatusSEXP, SEXP KMxsurvSEXP, SEXP KMysurvSEXP, SEXP KMxtimeSEXP, SEXP KMytimeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type xstatus(xstatusSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ystatus(ystatusSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type KMxsurv(KMxsurvSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type KMysurv(KMysurvSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type KMxtime(KMxtimeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type KMytime(KMytimeSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type xstatus(xstatusSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type ystatus(ystatusSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type KMxsurv(KMxsurvSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type KMysurv(KMysurvSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type KMxtime(KMxtimeSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type KMytime(KMytimeSEXP);
     rcpp_result_gen = Rcpp::wrap(taucpp(x, y, xstatus, ystatus, KMxsurv, KMysurv, KMxtime, KMytime));
     return rcpp_result_gen;
 END_RCPP

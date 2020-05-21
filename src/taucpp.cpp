@@ -3,7 +3,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
-Rcpp::List taucpp2(const arma::vec &x, const arma::vec &y, const arma::vec &xstatus, 
+Rcpp::List taucpp(const arma::vec &x, const arma::vec &y, const arma::vec &xstatus, 
             const arma::vec &ystatus, const arma::vec &KMxsurv, 
 		   const arma::vec &KMysurv, const arma::vec &KMxtime, 
             const arma::vec &KMytime){
