@@ -4,7 +4,7 @@
 \alias{tauCens}
 \title{Estimator of Kendall's tau for censored data}
 \usage{
-tauCens(formula, data = NULL, alpha = 0.05, method = "adjusted")
+tauCens(formula, data = NULL, method = "adjusted")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -13,12 +13,18 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 
 \item{data}{a data.frame containing the variables in the model.}
 
-\item{alpha}{Significance level.}
-
-\item{method}{Which estimator to use.}
+\item{method}{which estimator to use. The non-parametric estimator from Hougaard (2000)
+or the naive one where non-fully observed pairs are left out.}
+}
+\value{
+non-parametric estimate of Kendall's tau and parametric estimates from three different
+frailty models.
 }
 \description{
 Estimator of Kendall's tau for censored data
+}
+\references{
+Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 }
 \seealso{
 tauPar taucpp

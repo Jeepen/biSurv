@@ -5,9 +5,16 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
-#' @param weight Weight function for test. Default is 'independence' which is optimal for the Frank copula 
-#' @return Test statistic, SE and p-value for independence test.
-#' @seealso biHazards
+#' @param weight weight function for test. Default is 'independence'
+#' which is optimal for the Frank copula. Other options are 'dabrowska', 'atRisk', a weight matrix
+#' or a number (in which case the weight is constant).
+#' @return test statistic, SE and p-value for independence test.
+#' @seealso dabrowska
+#' @references Shih, Joanna H., and Thomas A. Louis. "Tests of independence for bivariate survival data." Biometrics (1996): 1440-1449.
+#' @examples
+#' library(survival)
+#' data("diabetic")
+#' independenceTest(Surv(time,status)~cluster(id), data = diabetic)
 #' @import stats
 #' @importFrom survival Surv
 #' @export
@@ -15,7 +22,7 @@
 independenceTest <- function(formula, data = NULL, weight = "independence"){
     Call <- match.call()
     d <- uniTrans(formula, data)
-    if(ncol(d) != 4)
+    if(ncol(d) != 4) 
         stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     eyy <- eyyfunc(x,y,sort_unique(x),sort_unique(y))

@@ -5,14 +5,17 @@
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.
 #' @param data a data.frame containing the variables in the model.
-#' @param alpha Significance level.
-#' @param method Which estimator to use.
+#' @param method which estimator to use. The non-parametric estimator from Hougaard (2000)
+#' or the naive one where non-fully observed pairs are left out.
 #' @seealso tauPar taucpp
+#' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
+#' @return non-parametric estimate of Kendall's tau and parametric estimates from three different
+#' frailty models. 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
 #' @importFrom Rcpp sourceCpp
-tauCens <- function(formula, data = NULL, alpha = .05, method = "adjusted"){
+tauCens <- function(formula, data = NULL, method = "adjusted"){
     Call <- match.call()
     gamma <- emfrail(formula = formula, data = data)
     theta <- 1/exp(gamma$logtheta)
@@ -77,10 +80,10 @@ print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symboli
 #' Get Kendall's tau from parameter or parameter from Kendall's tau
 #'
 #' @title Get Kendall's tau from parameter or parameter from Kendall's tau
-#' @param par Parameter for frailty model.
-#' @param dist Frailty distribution.
-#' @param output Return tau or parameter.
-#' @param type Parameterization of frailty distribution.
+#' @param par parameter value for frailty model.
+#' @param dist frailty distribution.
+#' @param output return tau or parameter.
+#' @param type parameterization of frailty distribution.
 #' @return Kendall's tau from parameter or parameter from Kendall's tau.
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

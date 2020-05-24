@@ -14,15 +14,18 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 \item{data}{a data.frame containing the variables in the model.}
 }
 \value{
-Data.frame with loglikelihood for different models, sorted.
+data.frame with loglikelihood for different models, sorted.
 }
 \description{
 Sort models according to loglikelihood
 }
 \details{
-It is mentioned in \code{vignette("frailtyEM_manual")} that the frailty with the
+it is mentioned in \code{vignette("frailtyEM_manual")} that the frailty with the
 highest loglikelihood should be prefered since all the models are special cases of the PVF frality
 family. This is done in a user-friendly way here.
+}
+\seealso{
+CHR autoplot.CHR
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

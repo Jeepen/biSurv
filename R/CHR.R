@@ -11,20 +11,21 @@
 #' and the ones implied by the different frailty models, is estimated.
 #' The function returns the estimates sorted from lowest (best) to highest (worst).
 #' @return Data.frame with ISD for different frailty distributions.
-#' @seealso chrCpp
+#' @seealso autoplot.CHR 
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
 #' @useDynLib biSurv
 #' @import frailtyEM
 #' @import survival
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @seealso logLikSort
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(formula, data, n = 5){
     Call <- match.call()
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
-        stop("RHS needs a 'cluster(id)' element")
+        stop("RHS of formula needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     S <- dabrowska(formula, data)
     if(length(x) != length(y)){
@@ -107,19 +108,19 @@ summary.CHR <- function(object, ...){
 #' Plot of CHR as a function of the survival function
 #'
 #' @title Plot of CHR as a function of the survival function.
-#' @param x An object of class \code{CHR}.
-#' @param ... Further arguments for \code{ggplot}.
-#' @details The CHR and the bivariate survival function are estimated seperately.
+#' @param x an object of class \code{CHR}.
+#' @param ... further arguments for \code{ggplot}.
+#' @details the CHR and the bivariate survival function are estimated seperately.
 #' Plotting the CHR as a function of the bivariate survival function tells us something about
 #' where in the data the dependence is strongest. Is it for small failure times
 #' (where the survival function is big), as implied by the positive stable model,
 #' or is it for late failure times as implied by the gamma frailty model? 
-#' @return Plot of CHR as a function of the survival function.
+#' @return plot of CHR as a function of the survival function.
 #' @seealso chrCpp
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-plot.CHR <- function(x, ...){
+autoplot.CHR <- function(x, ...){
     Names <- c("Gamma", "Positive stable", "Inverse Gaussian")
     melted <- melt(x$d,id="S")
     colnames(melted)[2] <- "Model"
@@ -135,10 +136,11 @@ plot.CHR <- function(x, ...){
 #'          operator, and the terms on the right.  The response must be a
 #'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.
 #' @param data a data.frame containing the variables in the model.
-#' @return Data.frame with loglikelihood for different models, sorted.
-#' @details It is mentioned in \code{vignette("frailtyEM_manual")} that the frailty with the
+#' @return data.frame with loglikelihood for different models, sorted.
+#' @details it is mentioned in \code{vignette("frailtyEM_manual")} that the frailty with the
 #' highest loglikelihood should be prefered since all the models are special cases of the PVF frality
-#' family. This is done in a user-friendly way here. 
+#' family. This is done in a user-friendly way here.
+#' @seealso CHR autoplot.CHR
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 logLikSort <- function(formula, data){

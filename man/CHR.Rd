@@ -31,7 +31,9 @@ The function returns the estimates sorted from lowest (best) to highest (worst).
 Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
 }
 \seealso{
-chrCpp
+autoplot.CHR
+
+logLikSort
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

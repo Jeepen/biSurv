@@ -13,16 +13,26 @@ survival object as returned by the \code{Surv} function. The RHS must contain a 
 
 \item{data}{a data.frame containing the variables in the model}
 
-\item{weight}{Weight function for test. Default is 'independence' which is optimal for the Frank copula}
+\item{weight}{weight function for test. Default is 'independence'
+which is optimal for the Frank copula. Other options are 'dabrowska', 'atRisk', a weight matrix
+or a number (in which case the weight is constant).}
 }
 \value{
-Test statistic, SE and p-value for independence test.
+test statistic, SE and p-value for independence test.
 }
 \description{
 Non-parametric independence test for bivariate survival data
 }
+\examples{
+library(survival)
+data("diabetic")
+independenceTest(Surv(time,status)~cluster(id), data = diabetic)
+}
+\references{
+Shih, Joanna H., and Thomas A. Louis. "Tests of independence for bivariate survival data." Biometrics (1996): 1440-1449.
+}
 \seealso{
-biHazards
+dabrowska
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

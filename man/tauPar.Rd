@@ -7,13 +7,13 @@
 tauPar(par = 0, dist = "gamma", output = "tau", type = "alpha")
 }
 \arguments{
-\item{par}{Parameter for frailty model.}
+\item{par}{parameter value for frailty model.}
 
-\item{dist}{Frailty distribution.}
+\item{dist}{frailty distribution.}
 
-\item{output}{Return tau or parameter.}
+\item{output}{return tau or parameter.}
 
-\item{type}{Parameterization of frailty distribution.}
+\item{type}{parameterization of frailty distribution.}
 }
 \value{
 Kendall's tau from parameter or parameter from Kendall's tau.

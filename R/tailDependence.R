@@ -40,7 +40,7 @@ tailDependence <- function(formula, data, q, tail = "lwr", method = "fast"){
     ## Non-parametric estimate
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
-        stop("RHS needs a 'cluster(id)' element")
+        stop("RHS of formula needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     Names <- c("Estimate", "Gamma", "Positive stable", "Inverse Gaussian")
     id <- rep(1:length(x),2)
