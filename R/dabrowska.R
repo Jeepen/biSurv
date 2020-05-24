@@ -129,20 +129,6 @@ KaplanMeier <- function(time, status){
     cumprod(1-dN/Y)
 }
 
-#' NPMLE estimator of bivariate survival function
-#'
-#' @title NPMLE estimator of bivariate survival function
-#' @param formula a formula object, with the response on the left of a ~
-#'          operator, and the terms on the right.  The response must be a
-#'          survival object as returned by the \code{Surv} function.
-#' The RHS must contain a 'cluster' term
-#' @param data a data.frame containing the variables in the model
-#' @param tol how large is the difference from iteration to iteration allowed to be
-#' @param maxIt how many iterations are acceptable
-#' @return matrix with estimate of bivariate survival function
-#' @seealso dabrowska
-#' @export
-#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
@@ -161,37 +147,16 @@ NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
             p3[xuni == x[i], yuni == y[i]] <- p3[xuni == x[i], yuni == y[i]] + 1 / n
         }
         else if(xstatus[i] == 1 & ystatus[i] == 0){
-            ## if(any(yuni > y[i])){
-                p1[xuni == x[i], yuni > y[i]] <- p1[xuni == x[i], yuni > y[i]] + 
-                    1 / (n * sum(yuni > y[i]))
-            ## }
-            ## else{
-            ##     p1[xuni == x[i], n2] <- p1[xuni == x[i], n2] + 1/n
-            ## }
+            p1[xuni == x[i], yuni > y[i]] <- p1[xuni == x[i], yuni > y[i]] + 
+                1 / (n * sum(yuni > y[i]))
         }
         else if(xstatus[i] == 0 & ystatus[i] == 1){
-            ## if(any(xuni > x[i])){
-                p1[xuni > x[i], yuni == y[i]] <- p1[xuni > x[i], yuni == y[i]] + 
-                    1 / (n * sum(xuni > x[i]))
-            ## }
-            ## else{
-            ##     p1[n1, yuni == y[i]] <- p1[n1, yuni == y[i]] + 1/n
-            ## }
+            p1[xuni > x[i], yuni == y[i]] <- p1[xuni > x[i], yuni == y[i]] + 
+                1 / (n * sum(xuni > x[i]))
         }
         else{
-            ## if((any(xuni>x[i]) & any(yuni>y[i]))){
-                p1[xuni > x[i], yuni > y[i]] <- p1[xuni > x[i], yuni > y[i]] +
-                    1 / (n * sum(xuni > x[i]) * sum(yuni > y[i]))
-            ## }
-            ## else if(any(xuni > x[i])){
-            ##     p1[xuni > x[i], n2] <- p1[xuni > x[i], n2] + 1/(n*sum(xuni>x[i]))
-            ## }
-            ## else if(any(yuni > y[i])){
-            ##     p1[n1, yuni > y[i]] <- p1[n1, yuni > y[i]] + 1/(n*sum(yuni>y[i]))
-            ## }
-            ## else{
-            ##     p1[n1,n2] <- p1[n1,n2] + 1/n
-            ## }
+            p1[xuni > x[i], yuni > y[i]] <- p1[xuni > x[i], yuni > y[i]] +
+                1 / (n * sum(xuni > x[i]) * sum(yuni > y[i]))
         }
     }
     p1 <- p1 + p3
@@ -207,40 +172,17 @@ NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
         p2 <- p3
         for(i in indx01){
             tmp <- (xuni > x[i])
-            ## if(any(tmp)){
-                p2[tmp, yuni == y[i]] <- p2[tmp, yuni == y[i]] + 1/n *
-                    p1[tmp, yuni == y[i]] / sum(p1[tmp, yuni == y[i]])
-            ## }
-            ## else{
-            ##     p2[n1, yuni == y[i]] <- p2[n1, yuni == y[i]] + 1/n
-            ## }
+            p2[tmp, yuni == y[i]] <- p2[tmp, yuni == y[i]] + 1/n *
+                p1[tmp, yuni == y[i]] / sum(p1[tmp, yuni == y[i]])
         }
         for(i in indx10){
             tmp <- (yuni > y[i])
-            ## if(any(tmp)){
-                p2[xuni == x[i], tmp] <- p2[xuni == x[i], tmp] + 1/n *
-                    p1[xuni == x[i], tmp] / sum(p1[xuni == x[i], tmp])                
-            ## }
-            ## else{
-            ##     p2[xuni == x[i], n2] <- p2[xuni == x[i], n2] + 1/n
-            ## }
+            p2[xuni == x[i], tmp] <- p2[xuni == x[i], tmp] + 1/n *
+                p1[xuni == x[i], tmp] / sum(p1[xuni == x[i], tmp])                
         }
         for(i in indx00){
-            ## if(any(xuni > x[i]) & any(yuni>y[i])){
                 p2[xuni>x[i], yuni>y[i]] <- p2[xuni>x[i], yuni>y[i]] + 1/n * 
                     p1[xuni>x[i], yuni>y[i]] / sum(p1[xuni>x[i], yuni>y[i]])
-            ## }
-            ## else if(any(xuni > x[i])){
-            ##     p2[xuni > x[i], n2] <- p2[xuni > x[i], n2] + 1/n *
-            ##         p1[xuni > x[i], n2] / sum(p1[xuni > x[i], n2])
-            ## }
-            ## else if(any(yuni > y[i])){
-            ##     p2[n1, yuni > y[i]] <- p2[n1, yuni > y[i]] + 1/n *
-            ##         p1[n1, yuni > y[i]] / sum(p1[n1, yuni > y[i]])
-            ## }
-            ## else{
-            ##     p2[n1,n2] <- p2[n1,n2] + 1/n
-            ## }
         }
         error <- max(abs(p2 - p1))
         p1 <- p2
@@ -268,21 +210,6 @@ NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
     out
 }
 
-#' Pruitt estimator of bivariate survival function
-#'
-#' @title Pruitt estimator of bivariate survival function
-#' @param formula a formula object, with the response on the left of a ~
-#'          operator, and the terms on the right.  The response must be a
-#'          survival object as returned by the \code{Surv} function.
-#' The RHS must contain a 'cluster' term
-#' @param data a data.frame containing the variables in the model
-#' @param gamma bandwidth of pruitt estimator 
-#' @param tol how large is the difference from iteration to iteration allowed to be
-#' @param maxIt how many iterations are acceptable
-#' @return Matrix with estimate of bivariate survival function
-#' @seealso dabrowska EMsurv
-#' @export
-#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
@@ -414,7 +341,9 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
 #' @param maxIt maximum number of iterations.
 #' @param method which estimator to use. 'dabrowska' (default), 'pruitt' or NPMLE
 #' @return matrix with estimate of bivariate survival function
-#' @seealso dabrowska EMsurv
+#' @seealso print.biSurv plot.biSurv
+#' @details TODO
+#' @references TODO
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 biSurv <- function(formula, data, gamma = NULL, tol = 1e-3, maxIt = 25, method = "dabrowska"){

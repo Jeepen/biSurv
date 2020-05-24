@@ -35,8 +35,11 @@ matrix with estimate of bivariate survival function
 \description{
 Non-parametric estimation of the bivariate survival function
 }
+\details{
+TODO
+}
 \seealso{
-dabrowska EMsurv
+print.biSurv plot.biSurv
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
