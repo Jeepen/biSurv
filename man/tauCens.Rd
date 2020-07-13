@@ -23,6 +23,9 @@ frailty models.
 \description{
 Estimator of Kendall's tau for censored data
 }
+\details{
+Kendall's tau is a rank based measure of dependence.
+}
 \references{
 Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 }

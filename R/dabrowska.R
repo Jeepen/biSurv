@@ -12,11 +12,11 @@
 #' @examples
 #' data(kidney)
 #' dabrowska(Surv(time,status) ~ age + sex + disease + cluster(id), data = kidney)
-#' @seealso print.dabrowska plot.dabrowska
+#' @seealso print.dabrowska plot.dabrowska CHR
 #' @examples
 #' library(survival)
 #' data("diabetic")
-#' s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+#' s <- dabrowska(Surv(time,status) ~ cluster(id), data = diabetic)
 #' s
 #' plot(s)
 #' @details the Dabrowska estimator of the bivariate survival function is estimated
@@ -129,7 +129,8 @@ KaplanMeier <- function(time, status){
     cumprod(1-dN/Y)
 }
 
-NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
+NPMLE <- function(formula, data, maxIt = 100){
+    tol <- .Machine$double.eps
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
@@ -187,6 +188,9 @@ NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
         error <- max(abs(p2 - p1))
         p1 <- p2
     }
+
+### Last stuff ###
+    cat("Number of iterations: ", itt, "\n")
     KMx <- KaplanMeier(x, xstatus)
     KMy <- KaplanMeier(y, ystatus)   
     indep <- KMx %*% t(KMy)
@@ -210,7 +214,8 @@ NPMLE <- function(formula, data, tol = 1e-3, maxIt = 25){
     out
 }
 
-pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
+pruitt <- function(formula, data, gamma, maxIt = 100){
+    tol <- .Machine$double.eps
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
@@ -235,8 +240,9 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
                 ytmp <- y[tmp]
                 ystatustmp <- ystatus[tmp]
                 tmpKM <- KaplanMeier(ytmp,ystatustmp)
-                tmpprob <- -diff(c(1, tmpKM[-length(tmpKM)],0))
+                tmpprob <- -diff(c(1, tmpKM))
                 p3[xuni == x[i], yuni %in% ytmp] <- p3[xuni == x[i], yuni %in% ytmp] + tmpprob / n
+                p3[xuni == x[i], yuni == n2] <- p3[xuni == x[i], yuni == n2] + 1/n*(1-sum(tmpprob))
             }
             else{
                 noneighbour <- noneighbour + 1
@@ -252,8 +258,9 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
                 xstatustmp <- xstatus[y[i] - gamma <= y & y[i] + gamma >= y & 
                                       x >= x[i] & ystatus == 1]
                 tmpKM <- KaplanMeier(xtmp,xstatustmp)
-                tmpprob <- -diff(c(1, tmpKM[-length(tmpKM)],0))
+                tmpprob <- -diff(c(1, tmpKM))
                 p3[xuni %in% xtmp, yuni == y[i]] <- p3[xuni %in% xtmp, yuni == y[i]] + tmpprob / n
+                p3[n1, yuni == y[i]] <- p3[n1, yuni == y[i]] + 1/n*(1-sum(tmpprob))
             }
             else{
                 noneighbour <- noneighbour + 1
@@ -261,23 +268,12 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
             }
         }
         else{
-            ## if(any(xuni > x[i]) & any(yuni > y[i])){
                 p1[xuni > x[i], yuni > y[i]] <- p1[xuni > x[i], yuni > y[i]] +
                     1 / (n * sum(xuni > x[i]) * sum(yuni > y[i]))
-            ## }
-            ## else if(any(xuni > x[i])){
-            ##     p1[xuni > x[i], n2] <- p1[xuni > x[i], n2] + 1/(n*sum(xuni>x[i]))
-            ## }
-            ## else if(any(yuni > y[i])){
-            ##     p1[n1, yuni > y[i]] <- p1[n1, yuni > y[i]] + 1/(n*sum(yuni>y[i]))
-            ## }
-            ## else{
-            ##     p1[n1,n2] <- p1[n1,n2] + 1/n
-            ## }
         }
     }
     p1 <- p1 + p3
-    warning(paste0("Number of observations with too small bandwidth: ", noneighbour))
+    cat("Number of observations with too small bandwidth: ", noneighbour, "\n")
     
 ### Step 2 ###
     error <- 1
@@ -287,25 +283,15 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
         itt <- itt + 1
         p2 <- p3
         for(i in inx){
-            ## if(any(xuni > x[i]) & any(yuni>y[i])){
                 p2[xuni>x[i], yuni>y[i]] <- p2[xuni>x[i], yuni>y[i]] + 1/n * 
                     p1[xuni>x[i], yuni>y[i]] / sum(p1[xuni>x[i], yuni>y[i]])
-            ## }
-            ## else if(any(xuni > x[i])){
-            ##     p2[xuni > x[i], n2] <- p2[xuni > x[i], n2] + 1/n *
-            ##         p1[xuni > x[i], n2] / sum(p1[xuni > x[i], n2])
-            ## }
-            ## else if(any(yuni > y[i])){
-            ##     p2[n1, yuni > y[i]] <- p2[n1, yuni > y[i]] + 1/n *
-            ##         p1[n1, yuni > y[i]] / sum(p1[n1, yuni > y[i]])
-            ## }
-            ## else{
-            ##     p2[n1,n2] <- p2[n1,n2] + 1/n
-            ## }
         }
         error <- max(abs(p2 - p1))
         p1 <- p2
     }
+
+### Last stuff ###    
+    cat("Number of iterations: ", itt, "\n")
     KMx <- KaplanMeier(x, xstatus)
     KMy <- KaplanMeier(y, ystatus)   
     indep <- KMx %*% t(KMy)
@@ -337,7 +323,6 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
 #' The RHS must contain a 'cluster' term
 #' @param data a data.frame containing the variables in the model
 #' @param gamma bandwidth of pruitt estimator. Can be ignored for other estimators. 
-#' @param tol how large is the difference from iteration to iteration allowed to be
 #' @param maxIt maximum number of iterations.
 #' @param method which estimator to use. 'dabrowska' (default), 'pruitt' or NPMLE
 #' @return matrix with estimate of bivariate survival function
@@ -346,7 +331,7 @@ pruitt <- function(formula, data, gamma, tol = 1e-3, maxIt = 25){
 #' @references TODO
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
-biSurv <- function(formula, data, gamma = NULL, tol = 1e-3, maxIt = 25, method = "dabrowska"){
+biSurv <- function(formula, data, gamma = NULL, maxIt = 100, method = "dabrowska"){
     Call <- match.call()
     if(method == "dabrowska"){
         hm <- dabrowska(formula, data)
@@ -358,7 +343,7 @@ biSurv <- function(formula, data, gamma = NULL, tol = 1e-3, maxIt = 25, method =
         out
     }
     else if(method == "NPMLE"){
-        hm <- NPMLE(formula, data, tol = tol, maxIt = maxIt)
+        hm <- NPMLE(formula, data, maxIt = maxIt)
         out <- list(call = Call, surv = hm$surv, timex = hm$timex, timey = hm$timey,
                     indep = hm$indep, n = nrow(data), n.events = hm$n.events,
                     medsurv = hm$medsurv, medCon = hm$medCon, median1 = hm$median1,
@@ -371,7 +356,7 @@ biSurv <- function(formula, data, gamma = NULL, tol = 1e-3, maxIt = 25, method =
             stop("you have to specify a bandwidth (gamma)")
         }
         else{
-            hm <- pruitt(formula, data, gamma, tol = 1e-3, maxIt = 25)
+            hm <- pruitt(formula, data, gamma, maxIt = maxIt)
             out <- list(call = Call, surv = hm$surv, timex = hm$timex, timey = hm$timey,
                         indep = hm$indep, n = nrow(data), n.events = hm$n.events,
                         medsurv = hm$medsurv, medCon = hm$medCon, median1 = hm$median1,

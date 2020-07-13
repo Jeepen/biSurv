@@ -32,12 +32,12 @@ data(kidney)
 dabrowska(Surv(time,status) ~ age + sex + disease + cluster(id), data = kidney)
 library(survival)
 data("diabetic")
-s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+s <- dabrowska(Surv(time,status) ~ cluster(id), data = diabetic)
 s
 plot(s)
 }
 \seealso{
-print.dabrowska plot.dabrowska
+print.dabrowska plot.dabrowska CHR
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

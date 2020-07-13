@@ -4,14 +4,7 @@
 \alias{biSurv}
 \title{Non-parametric estimation of the bivariate survival function}
 \usage{
-biSurv(
-  formula,
-  data,
-  gamma = NULL,
-  tol = 0.001,
-  maxIt = 25,
-  method = "dabrowska"
-)
+biSurv(formula, data, gamma = NULL, maxIt = 100, method = "dabrowska")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -22,8 +15,6 @@ The RHS must contain a 'cluster' term}
 \item{data}{a data.frame containing the variables in the model}
 
 \item{gamma}{bandwidth of pruitt estimator. Can be ignored for other estimators.}
-
-\item{tol}{how large is the difference from iteration to iteration allowed to be}
 
 \item{maxIt}{maximum number of iterations.}
 
@@ -36,6 +27,9 @@ matrix with estimate of bivariate survival function
 Non-parametric estimation of the bivariate survival function
 }
 \details{
+TODO
+}
+\references{
 TODO
 }
 \seealso{

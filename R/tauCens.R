@@ -10,7 +10,8 @@
 #' @seealso tauPar taucpp
 #' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 #' @return non-parametric estimate of Kendall's tau and parametric estimates from three different
-#' frailty models. 
+#' frailty models.
+#' @details Kendall's tau is a rank based measure of dependence. 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
@@ -77,6 +78,75 @@ print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symboli
     invisible(x)
 }
 
+#' Estimate of median concordance for censored data
+#'
+#' @title Estimate of median concordance for censored data
+#' @param formula a formula object, with the response on the left of a ~
+#'          operator, and the terms on the right.  The response must be a
+#'          survival object as returned by the \code{Surv} function. The RHS must contain a 'cluster' term.
+#' @param data a data.frame containing the variables in the model.
+#' @param gamma bandwidth for pruitt estimator. Ignored if estimator is another one.
+#' @param maxIt maximum number of iterations for NPMLE and pruitt estimators of
+#' bivariate survival function. Doesn't do anything if estimator is 'dabrowska' (default).
+#' @param method which estimator to use for the bivariate survival function.
+#' @details median concordance is a rank based measure of dependence which ensures that
+#' it doesn't change if we transform the marginal distributions with strictly increasing functions.
+#' Median concordance is defined as
+#'
+#' %E(T_1,T_2)
+#'
+#' Median concordance is more intuitive than for instance Kendall's tau
+#' since you are only comparing whether one pair of observations is concordance or
+#' discordant wrt their respective medians rather than whether one pair is concordant/discordant
+#' compared to another pair. Theoretically the median concordance is equal to
+#' 4*S(m1,m2)-1 where m1 and m2 are the marginal medians and S is the bivariate survival function.
+#' This function estimates S both non-parametrically and parametrically for three frailty models.
+#' The survival function value for the frailty models at the medians are
+#' uniquely determined by the copula they imply since S(m1,m2) = C(S1(m1),S2(m2)) = C(0.5,0.5),
+#' where C is the survival copula implied by the model. 
+#' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
+#' @return non-parametric estimate of median concordance and parametric estimates from
+#' three different frailty models. 
+#' @export
+#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
+medianConcordance <- function(formula, data = NULL, gamma = NULL,
+                              maxIt = 100, method = "dabrowska"){
+    Call <- match.call()
+    gamma <- emfrail(formula = formula, data = data)
+    theta <- 1/exp(gamma$logtheta)
+    stable <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="stable"))
+    alpha1 <- exp(stable$logtheta)/(1+exp(stable$logtheta))
+    invgauss <- emfrail(formula = formula, data = data, distribution=emfrail_dist(dist="pvf"))
+    alpha2 <- exp(invgauss$logtheta)
+    S <- biSurv(formula, data, gamma, maxIt, method)
+    gammaC <- ifelse(theta==0, 1/4, (2^(theta+1)-1)^(-1/theta))
+    posstabC <- exp(-(2^alpha1*log(2)))
+    invgaussC <- exp(alpha2-alpha2^(.5)*(4*(log(.5)^2/(2*alpha2)-log(.5))+alpha2)^.5)
+    out <- list(Empirical = 4*S$medsurv-1, gamma = 4*gammaC-1, posstab = 4*posstabC-1,
+                invgauss = 4*invgaussC-1, call = Call)
+    class(out) <- "medCon"
+    out
+}
+
+
+#' @export
+print.medCon <- function (x, digits = max(3L, getOption("digits") - 3L),
+                          symbolic.cor = x$symbolic.cor, ...) 
+{
+    cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+        "\n\n", sep = "")
+    coefficients <- x$coefficients
+    se <- x$se
+    coefs <- matrix(c(x$Empirical, x$gamma, x$posstab, x$invgauss), nrow = 4, ncol = 1)
+    rownames(coefs) <- c("Empirical", "Gamma", "Positive stable", 
+                         "Inverse Gaussian")
+    colnames(coefs) <- "Median concordance"
+    printCoefmat(coefs, digits = digits, na.print = "", ...)
+    cat("\n")
+    invisible(x)
+}
+
+
 #' Get Kendall's tau from parameter or parameter from Kendall's tau
 #'
 #' @title Get Kendall's tau from parameter or parameter from Kendall's tau
@@ -140,3 +210,4 @@ tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
         })
     }
 }
+
