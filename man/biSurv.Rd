@@ -27,10 +27,19 @@ matrix with estimate of bivariate survival function
 Non-parametric estimation of the bivariate survival function
 }
 \details{
-TODO
+many methods for bivariate survival data need an estimator for the bivariate survival function.
+This function makes it possible to choose between three estimators: 1. the Dabrowska estimator, which has the advantage of implying
+marginal survival functions given by the Kaplan-Meier, but gives negative probability mass to certain points, which is, of course, not wanted.
+2. The Pruitt estimator which has positive probability mass everywhere and which has no problems with singly censored observations, but has a bandwidth, \code{gamma} (so strictly speaking not non-parametric).
+3. The NPMLE estimator, which, as the name suggests, is a non-parametric MLE. It has the disadvantage that it doesn't converge for singly censored observations since
+probability mass has to be distributed over a line which almost surely has no observations lying on it.
 }
 \references{
-TODO
+Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
+
+van der Laan, Mark J. Modified EM-estimator of the bivariate survival function. Rijksuniversiteit Utrecht. Mathematisch Instituut, 1993.
+
+Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 }
 \seealso{
 print.biSurv plot.biSurv

@@ -4,7 +4,7 @@
 \alias{tailDependence}
 \title{Estimators of "tail-dependence" for bivariate survival data}
 \usage{
-tailDependence(formula, data, q, tail = "lwr", method = "fast")
+tailDependence(formula, data, q, tail = "lwr", method = "dabrowska")
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

@@ -10,9 +10,10 @@
 #' The ISD between the empirical CHR (as a function of the bivariate survival function)
 #' and the ones implied by the different frailty models, is estimated.
 #' The function returns the estimates sorted from lowest (best) to highest (worst).
+#' It is possible to get a very nice plot of the empiricaly estimated function and the parametric ones with autoplot.
 #' @return Data.frame with ISD for different frailty distributions.
 #' @seealso autoplot.CHR 
-#' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
+#' @references Bandeen-Roche, Karen. "A diagnostic for association in bivariate survival models." Lifetime Data Analysis 11.2 (2005): 245-264.
 #' @useDynLib biSurv
 #' @import frailtyEM
 #' @import survival
@@ -117,7 +118,8 @@ summary.CHR <- function(object, ...){
 #' or is it for late failure times as implied by the gamma frailty model? 
 #' @return plot of CHR as a function of the survival function.
 #' @seealso chrCpp
-#' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64. 
+#' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
+#' @importFrom graphics contour par
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 autoplot.CHR <- function(x, ...){

@@ -26,9 +26,10 @@ The CHR and the bivariate survival function are estimated seperately.
 The ISD between the empirical CHR (as a function of the bivariate survival function)
 and the ones implied by the different frailty models, is estimated.
 The function returns the estimates sorted from lowest (best) to highest (worst).
+It is possible to get a very nice plot of the empiricaly estimated function and the parametric ones with autoplot.
 }
 \references{
-Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
+Bandeen-Roche, Karen. "A diagnostic for association in bivariate survival models." Lifetime Data Analysis 11.2 (2005): 245-264.
 }
 \seealso{
 autoplot.CHR

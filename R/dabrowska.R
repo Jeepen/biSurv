@@ -1,30 +1,3 @@
-#' Dabrowska estimator of the bivariate survival function
-#'
-#' @title Dabrowska estimator of the bivariate survival function
-#' @param formula a formula object, with the response on the left of a ~
-#'          operator, and the terms on the right.  The response must be a
-#'          survival object as returned by the \code{Surv} function.
-#' The RHS must contain a 'cluster' term
-#' @param data a data.frame containing the variables in the model
-#' @return an object of class 'dabrowska' containing the dabrowska estimate of the
-#' bivariate survival function
-#' @importFrom Rfast sort_unique
-#' @examples
-#' data(kidney)
-#' dabrowska(Surv(time,status) ~ age + sex + disease + cluster(id), data = kidney)
-#' @seealso print.dabrowska plot.dabrowska CHR
-#' @examples
-#' library(survival)
-#' data("diabetic")
-#' s <- dabrowska(Surv(time,status) ~ cluster(id), data = diabetic)
-#' s
-#' plot(s)
-#' @details the Dabrowska estimator of the bivariate survival function is estimated
-#' and returned along with the independence estimator. This function may be interesting
-#' in and of itself or because of its use in determining goodness of fit internally in the \code{CHR}
-#' function or elsewhere. 
-#' @export
-#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 dabrowska <- function(formula, data){
     d <- uniTrans(formula, data)
     if(ncol(d) != 4)
@@ -66,12 +39,12 @@ dabrowska <- function(formula, data){
 #' @return number of observations, number of events, medians for the marginals,
 #' median concordance, and joint probability of both marginals being greater than respective medians
 #' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
-#' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." The Annals of Statistics (1988): 1475-1489.
-#' @seealso dabrowska plot.dabrowska
+#' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
+#' @seealso biSurv plot.biSurv
 #' @examples
 #' library(survival)
 #' data("diabetic")
-#' s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+#' s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
 #' s
 #' plot(s)
 #' @export
@@ -85,18 +58,18 @@ print.biSurv <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
 
 #' Contour plot of the Dabrowska estimate of the bivariate survival function
 #'
-#' @title Contour plot of the Dabrowska estimate of the bivariate survival function
+#' @title Contour plot of the bivariate survival function
 #' @param x an object of class \code{dabrowska}.
 #' @param ... further arguments for \code{ggplot}.
 #' @return contour plot of estimate of bivariate survival function
 #' along with contour plot of independence estimate of bivariate survival function.  
 #' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
-#' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." The Annals of Statistics (1988): 1475-1489.
+#' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 #' @seealso dabrowska print.dabrowska
 #' @examples
 #' library(survival)
 #' data("diabetic")
-#' s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+#' s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
 #' plot(s)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
@@ -327,8 +300,18 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
 #' @param method which estimator to use. 'dabrowska' (default), 'pruitt' or NPMLE
 #' @return matrix with estimate of bivariate survival function
 #' @seealso print.biSurv plot.biSurv
-#' @details TODO
-#' @references TODO
+#' @details many methods for bivariate survival data need an estimator for the bivariate survival function.
+#' This function makes it possible to choose between three estimators: 1. the Dabrowska estimator, which has the advantage of implying
+#' marginal survival functions given by the Kaplan-Meier, but gives negative probability mass to certain points, which is, of course, not wanted.
+#' 2. The Pruitt estimator which has positive probability mass everywhere and which has no problems with singly censored observations, but has a bandwidth, \code{gamma} (so strictly speaking not non-parametric).
+#' 3. The NPMLE estimator, which, as the name suggests, is a non-parametric MLE. It has the disadvantage that it doesn't converge for singly censored observations since
+#' probability mass has to be distributed over a line which almost surely has no observations lying on it.
+#' @importFrom Rfast sort_unique
+#' @references Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
+#' 
+#' van der Laan, Mark J. Modified EM-estimator of the bivariate survival function. Rijksuniversiteit Utrecht. Mathematisch Instituut, 1993.
+#' 
+#' Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 biSurv <- function(formula, data, gamma = NULL, maxIt = 100, method = "dabrowska"){

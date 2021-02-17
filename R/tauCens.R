@@ -8,10 +8,10 @@
 #' @param method which estimator to use. The non-parametric estimator from Hougaard (2000)
 #' or the naive one where non-fully observed pairs are left out.
 #' @seealso tauPar taucpp
-#' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
+#' @references Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
 #' @return non-parametric estimate of Kendall's tau and parametric estimates from three different
 #' frailty models.
-#' @details Kendall's tau is a rank based measure of dependence. 
+#' @details Kendall's tau is a rank based measure of dependence. Note that this estimator is biased towards zero (and so is the estimator for the variance). 
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv

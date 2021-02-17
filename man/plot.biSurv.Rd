@@ -2,7 +2,7 @@
 % Please edit documentation in R/dabrowska.R
 \name{plot.biSurv}
 \alias{plot.biSurv}
-\title{Contour plot of the Dabrowska estimate of the bivariate survival function}
+\title{Contour plot of the bivariate survival function}
 \usage{
 \method{plot}{biSurv}(x, ...)
 }
@@ -21,13 +21,13 @@ Contour plot of the Dabrowska estimate of the bivariate survival function
 \examples{
 library(survival)
 data("diabetic")
-s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
 plot(s)
 }
 \references{
 Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 
-Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." The Annals of Statistics (1988): 1475-1489.
+Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 }
 \seealso{
 dabrowska print.dabrowska

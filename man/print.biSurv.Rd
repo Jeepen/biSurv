@@ -23,17 +23,17 @@ Print a short summary of dabrowska estimate
 \examples{
 library(survival)
 data("diabetic")
-s <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
 s
 plot(s)
 }
 \references{
 Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 
-Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." The Annals of Statistics (1988): 1475-1489.
+Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 }
 \seealso{
-dabrowska plot.dabrowska
+biSurv plot.biSurv
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

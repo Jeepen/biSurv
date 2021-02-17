@@ -24,10 +24,10 @@ frailty models.
 Estimator of Kendall's tau for censored data
 }
 \details{
-Kendall's tau is a rank based measure of dependence.
+Kendall's tau is a rank based measure of dependence. Note that this estimator is biased towards zero (and so is the estimator for the variance).
 }
 \references{
-Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
+Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
 }
 \seealso{
 tauPar taucpp
