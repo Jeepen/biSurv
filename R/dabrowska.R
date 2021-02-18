@@ -3,8 +3,8 @@ dabrowska <- function(formula, data){
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
-    xuni <- sort_unique(x)
-    yuni <- sort_unique(y)
+    xuni <- sort_unique(x[xstatus==1])
+    yuni <- sort_unique(y[ystatus==1])
     haz <- hazardscpp(x,y,xstatus,ystatus,xuni,yuni)
     KMx <- KaplanMeier(x, xstatus)
     KMy <- KaplanMeier(y, ystatus)   
@@ -21,7 +21,7 @@ dabrowska <- function(formula, data){
     else{
         t01 <- NA
         t02 <- NA
-        medsurv <- est[length(xuni),length(yuni)]
+        medsurv <- NA
     }
     medCon <- 4 * medsurv - 1
     out <- list(surv = est, timex = xuni, timey = yuni,
@@ -79,7 +79,6 @@ plot.biSurv <- function(x, ...){
     contour(x = x$timex, y = x$timey, z = x$indep, xlab = "", ylab = "", main = "Independence")
 }
 
-    
 biHazards <- function(formula, data = NULL){
     Call <- match.call()
     d <- uniTrans(formula, data)
@@ -96,7 +95,7 @@ biHazards <- function(formula, data = NULL){
 }
 
 KaplanMeier <- function(time, status){
-    t <- sort_unique(time)
+    t <- sort_unique(time[status==1])
     Y <- sapply(t, function(x) sum(time>=x))
     dN <- sapply(t, function(x) sum(time==x & status == 1))
     cumprod(1-dN/Y)
@@ -108,8 +107,8 @@ NPMLE <- function(formula, data, maxIt = 100){
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
-    xuni <- c(sort_unique(x), max(x)+1)
-    yuni <- c(sort_unique(y), max(x)+1)
+    xuni <- c(sort_unique(x[xstatus==1]), max(x)+1)
+    yuni <- c(sort_unique(y[ystatus==1]), max(y)+1)
     n <- length(x)
     n1 <- length(xuni)
     n2 <- length(yuni)
@@ -177,7 +176,7 @@ NPMLE <- function(formula, data, maxIt = 100){
     else{
         t01 <- NA
         t02 <- NA
-        medsurv <- est[length(xuni)-1,length(yuni)-1]
+        medsurv <- NA
     }
     medCon <- 4 * medsurv - 1
     out <- list(surv = est, timex = xuni[-length(xuni)], timey = yuni[-length(yuni)],
@@ -193,8 +192,8 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
     if(ncol(d) != 4)
         stop("RHS needs a 'cluster(id)' element")
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
-    xuni <- c(sort_unique(x), max(x)+1)
-    yuni <- c(sort_unique(y), max(x)+1)
+    xuni <- c(sort_unique(x[xstatus==1]), max(x)+1)
+    yuni <- c(sort_unique(y[ystatus==1]), max(y)+1)
     n <- length(x)
     n1 <- length(xuni)
     n2 <- length(yuni)
@@ -208,14 +207,17 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
         }
         else if(xstatus[i] == 1 & ystatus[i] == 0){
             tmp <- (x[i] - gamma <= x & x[i] + gamma >= x & 
-                    y > y[i] & xstatus == 1)
+                    y > y[i] & xstatus == 1 & ystatus == 1)
             if(any(tmp)){
+                ytmp2 <- y[tmp]
+                tmp <- (x[i] - gamma <= x & x[i] + gamma >= x & 
+                        y > y[i] & xstatus == 1)
                 ytmp <- y[tmp]
                 ystatustmp <- ystatus[tmp]
                 tmpKM <- KaplanMeier(ytmp,ystatustmp)
                 tmpprob <- -diff(c(1, tmpKM))
-                p3[xuni == x[i], yuni %in% ytmp] <- p3[xuni == x[i], yuni %in% ytmp] + tmpprob / n
-                p3[xuni == x[i], yuni == n2] <- p3[xuni == x[i], yuni == n2] + 1/n*(1-sum(tmpprob))
+                p3[xuni == x[i], yuni %in% ytmp2] <- p3[xuni == x[i], yuni %in% ytmp2] + tmpprob / n
+                p3[xuni == x[i], n2] <- p3[xuni == x[i], n2] + 1/n*(1-sum(tmpprob))
             }
             else{
                 noneighbour <- noneighbour + 1
@@ -224,15 +226,16 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
         }
         else if(xstatus[i] == 0 & ystatus[i] == 1){
             tmp <- (y[i] - gamma <= y & y[i] + gamma >= y & 
-                      x > x[i] & ystatus == 1)
+                    x > x[i] & xstatus == 1 & ystatus == 1)
             if(any(tmp)){
-                xtmp <- x[y[i] - gamma <= y & y[i] + gamma >= y & 
-                          x >= x[i] & ystatus == 1]
-                xstatustmp <- xstatus[y[i] - gamma <= y & y[i] + gamma >= y & 
-                                      x >= x[i] & ystatus == 1]
+                xtmp2 <- x[tmp]
+                tmp <- (y[i] - gamma <= y & y[i] + gamma >= y & 
+                        x > x[i] & ystatus == 1)
+                xtmp <- x[tmp]
+                xstatustmp <- xstatus[tmp]
                 tmpKM <- KaplanMeier(xtmp,xstatustmp)
                 tmpprob <- -diff(c(1, tmpKM))
-                p3[xuni %in% xtmp, yuni == y[i]] <- p3[xuni %in% xtmp, yuni == y[i]] + tmpprob / n
+                p3[xuni %in% xtmp2, yuni == y[i]] <- p3[xuni %in% xtmp2, yuni == y[i]] + tmpprob / n
                 p3[n1, yuni == y[i]] <- p3[n1, yuni == y[i]] + 1/n*(1-sum(tmpprob))
             }
             else{
@@ -278,7 +281,7 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
     else{
         t01 <- NA
         t02 <- NA
-        medsurv <- est[length(xuni)-1,length(yuni)-1]
+        medsurv <- NA
     }
     medCon <- 4 * medsurv - 1
     out <- list(surv = est, timex = xuni[-length(xuni)], timey = yuni[-length(yuni)],

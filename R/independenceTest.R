@@ -17,6 +17,7 @@
 #' independenceTest(Surv(time,status)~cluster(id), data = diabetic)
 #' @import stats
 #' @importFrom survival Surv
+#' @importFrom Rfast sort_unique
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 independenceTest <- function(formula, data = NULL, weight = "independence"){

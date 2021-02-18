@@ -37,14 +37,14 @@ CHR <- function(formula, data, n = 5){
     }
     n0 <- length(x)
     condis <- chrCpp(x, y, xstatus, ystatus)
-    xuni <- sort_unique(x)
-    yuni <- sort_unique(y)
+    xuni <- sort_unique(x[xstatus == 1])
+    yuni <- sort_unique(y[ystatus == 1])
     xmin <- outer(x, x, FUN="pmin")
     ymin <- outer(y, y, FUN="pmin")
     SS <- matrix(NA, n0, n0)
     for(i in 2:n0){
         for(j in 1:(i-1)){
-            SS[i,j] <- S$surv[xuni == xmin[i,j], yuni == ymin[i,j]]
+            SS[i,j] <- min(S$surv[xuni <= xmin[i,j], yuni <= ymin[i,j]])
         }
     }
     breaks <- seq(0,1,length.out=n+1)
