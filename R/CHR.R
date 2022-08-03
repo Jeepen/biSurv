@@ -19,7 +19,11 @@
 #' @import survival
 #' @import ggplot2
 #' @importFrom reshape2 melt
-#' @seealso logLikSort
+#' @seealso logLikSort autoplot.CHR
+#' @examples
+#' library(survival)
+#' data("diabetic")
+#' CHR(Surv(time,status) ~ cluster(id), data = diabetic)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(formula, data, n = 5){
@@ -44,7 +48,12 @@ CHR <- function(formula, data, n = 5){
     SS <- matrix(NA, n0, n0)
     for(i in 2:n0){
         for(j in 1:(i-1)){
-            SS[i,j] <- min(S$surv[xuni <= xmin[i,j], yuni <= ymin[i,j]])
+            if(!any(xuni <= xmin[i,j]) | !any(yuni <= ymin[i,j])){
+                SS[i,j] <- 1
+            }
+            else{
+                SS[i,j] <- min(S$surv[xuni <= xmin[i,j], yuni <= ymin[i,j]])
+            }
         }
     }
     breaks <- seq(0,1,length.out=n+1)
@@ -110,16 +119,22 @@ summary.CHR <- function(object, ...){
 #'
 #' @title Plot of CHR as a function of the survival function.
 #' @param x an object of class \code{CHR}.
-#' @param ... further arguments for \code{ggplot}.
+#' @param ... further arguments for \code{ggplot2}.
 #' @details the CHR and the bivariate survival function are estimated seperately.
 #' Plotting the CHR as a function of the bivariate survival function tells us something about
 #' where in the data the dependence is strongest. Is it for small failure times
 #' (where the survival function is big), as implied by the positive stable model,
 #' or is it for late failure times as implied by the gamma frailty model? 
 #' @return plot of CHR as a function of the survival function.
-#' @seealso chrCpp
+#' @seealso CHR logLikSort
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
 #' @importFrom graphics contour par
+#' @examples
+#' library(survival)
+#' library(ggplot2)
+#' data("diabetic")
+#' obj <- CHR(Surv(time,status) ~ cluster(id), data = diabetic)
+#' autoplot(obj)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 autoplot.CHR <- function(x, ...){
@@ -143,6 +158,10 @@ autoplot.CHR <- function(x, ...){
 #' highest loglikelihood should be prefered since all the models are special cases of the PVF frality
 #' family. This is done in a user-friendly way here.
 #' @seealso CHR autoplot.CHR
+#' @examples
+#' library(survival)
+#' data("diabetic")
+#' logLikSort(Surv(time,status) ~ cluster(id), data = diabetic)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 logLikSort <- function(formula, data){

@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{an object of class \code{CHR}.}
 
-\item{...}{further arguments for \code{ggplot}.}
+\item{...}{further arguments for \code{ggplot2}.}
 }
 \value{
 plot of CHR as a function of the survival function.
@@ -24,11 +24,18 @@ where in the data the dependence is strongest. Is it for small failure times
 (where the survival function is big), as implied by the positive stable model,
 or is it for late failure times as implied by the gamma frailty model?
 }
+\examples{
+library(survival)
+library(ggplot2)
+data("diabetic")
+obj <- CHR(Surv(time,status) ~ cluster(id), data = diabetic)
+autoplot(obj)
+}
 \references{
 Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
 }
 \seealso{
-chrCpp
+CHR logLikSort
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

@@ -38,13 +38,14 @@ median concordance is a rank based measure of dependence which ensures that
 it doesn't change if we transform the marginal distributions with strictly increasing functions.
 Median concordance is defined as
 
-%E(T_1,T_2)
+E(sign((T1 - m1)(T_2 - m2))),
 
+where m1 and m2 are the marginal medians.
 Median concordance is more intuitive than for instance Kendall's tau
 since you are only comparing whether one pair of observations is concordance or
 discordant wrt their respective medians rather than whether one pair is concordant/discordant
-compared to another pair. Theoretically the median concordance is equal to
-4*S(m1,m2)-1 where m1 and m2 are the marginal medians and S is the bivariate survival function.
+compared to another pair. The median concordance is equal to
+4*S(m1,m2)-1 where S is the bivariate survival function.
 This function estimates S both non-parametrically and parametrically for three frailty models.
 The survival function value for the frailty models at the medians are
 uniquely determined by the copula they imply since S(m1,m2) = C(S1(m1),S2(m2)) = C(0.5,0.5),

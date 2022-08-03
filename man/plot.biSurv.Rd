@@ -30,7 +30,7 @@ Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 }
 \seealso{
-dabrowska print.dabrowska
+biSurv plot.biSurv
 }
 \author{
 Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>

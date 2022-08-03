@@ -24,6 +24,11 @@ it is mentioned in \code{vignette("frailtyEM_manual")} that the frailty with the
 highest loglikelihood should be prefered since all the models are special cases of the PVF frality
 family. This is done in a user-friendly way here.
 }
+\examples{
+library(survival)
+data("diabetic")
+logLikSort(Surv(time,status) ~ cluster(id), data = diabetic)
+}
 \seealso{
 CHR autoplot.CHR
 }

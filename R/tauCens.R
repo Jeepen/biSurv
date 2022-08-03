@@ -31,8 +31,8 @@ tauCens <- function(formula, data = NULL, method = "adjusted"){
     x <- d$x; y <- d$y; xstatus <- d$xstatus; ystatus <- d$ystatus
     id <- rep(1:length(x),2)
     if(method=="adjusted"){
-        KMx <- list(time = sort_unique(x), surv = KaplanMeier(x, xstatus))
-        KMy <- list(time = sort_unique(y), surv = KaplanMeier(y, ystatus))
+        KMx <- list(time = sort_unique(x), surv = KaplanMeier2(x, xstatus))
+        KMy <- list(time = sort_unique(y), surv = KaplanMeier2(y, ystatus))
         tauu <- taucpp(x,y,xstatus,ystatus,KMx$surv,KMy$surv,KMx$time,KMy$time)
         n <- length(x)
         a <- tauu$a
@@ -61,6 +61,14 @@ tauCens <- function(formula, data = NULL, method = "adjusted"){
     class(out) <- "tauCens"
     out
 }
+
+KaplanMeier2 <- function(time, status){
+    t <- sort_unique(time)
+    Y <- sapply(t, function(x) sum(time>=x))
+    dN <- sapply(t, function(x) sum(time==x & status == 1))
+    cumprod(1-dN/Y)
+}
+
 
 #' @export
 print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symbolic.cor = x$symbolic.cor, 
@@ -93,13 +101,14 @@ print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symboli
 #' it doesn't change if we transform the marginal distributions with strictly increasing functions.
 #' Median concordance is defined as
 #'
-#' %E(T_1,T_2)
+#' E(sign((T1 - m1)(T_2 - m2))),
 #'
+#' where m1 and m2 are the marginal medians.
 #' Median concordance is more intuitive than for instance Kendall's tau
 #' since you are only comparing whether one pair of observations is concordance or
 #' discordant wrt their respective medians rather than whether one pair is concordant/discordant
-#' compared to another pair. Theoretically the median concordance is equal to
-#' 4*S(m1,m2)-1 where m1 and m2 are the marginal medians and S is the bivariate survival function.
+#' compared to another pair. The median concordance is equal to
+#' 4*S(m1,m2)-1 where S is the bivariate survival function.
 #' This function estimates S both non-parametrically and parametrically for three frailty models.
 #' The survival function value for the frailty models at the medians are
 #' uniquely determined by the copula they imply since S(m1,m2) = C(S1(m1),S2(m2)) = C(0.5,0.5),

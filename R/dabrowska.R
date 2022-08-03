@@ -65,7 +65,7 @@ print.biSurv <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
 #' along with contour plot of independence estimate of bivariate survival function.  
 #' @references Hougaard, Philip. (2000). Analysis of Multivariate Survival Data.
 #' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
-#' @seealso dabrowska print.dabrowska
+#' @seealso biSurv plot.biSurv
 #' @examples
 #' library(survival)
 #' data("diabetic")
@@ -315,6 +315,10 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
 #' van der Laan, Mark J. Modified EM-estimator of the bivariate survival function. Rijksuniversiteit Utrecht. Mathematisch Instituut, 1993.
 #' 
 #' Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
+#' @examples
+#' library(survival)
+#' data("diabetic")
+#' biSurv(Surv(time,status)~cluster(id), data = diabetic)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 biSurv <- function(formula, data, gamma = NULL, maxIt = 100, method = "dabrowska"){

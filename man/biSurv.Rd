@@ -34,6 +34,11 @@ marginal survival functions given by the Kaplan-Meier, but gives negative probab
 3. The NPMLE estimator, which, as the name suggests, is a non-parametric MLE. It has the disadvantage that it doesn't converge for singly censored observations since
 probability mass has to be distributed over a line which almost surely has no observations lying on it.
 }
+\examples{
+library(survival)
+data("diabetic")
+biSurv(Surv(time,status)~cluster(id), data = diabetic)
+}
 \references{
 Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
 
