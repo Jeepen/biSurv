@@ -42,9 +42,8 @@ dabrowska <- function(formula, data){
 #' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 #' @seealso biSurv plot.biSurv
 #' @examples
-#' library(survival)
-#' data("diabetic")
-#' s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
+#' d <- survival::kidney
+#' s <- biSurv(Surv(time,status)~cluster(id), data = d)
 #' s
 #' plot(s)
 #' @export
@@ -67,9 +66,8 @@ print.biSurv <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
 #' @references Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 #' @seealso biSurv plot.biSurv
 #' @examples
-#' library(survival)
-#' data("diabetic")
-#' s <- biSurv(Surv(time,status)~cluster(id), data = diabetic)
+#' d <- survival::kidney
+#' s <- biSurv(Surv(time,status)~cluster(id), data = d)
 #' plot(s)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
@@ -316,9 +314,8 @@ pruitt <- function(formula, data, gamma, maxIt = 100){
 #' 
 #' Dabrowska, Dorota M. "Kaplan-Meier estimate on the plane." Annals of Statistics 16.4 (1988): 1475-1489.
 #' @examples
-#' library(survival)
-#' data("diabetic")
-#' biSurv(Surv(time,status)~cluster(id), data = diabetic)
+#' d <- survival::kidney
+#' biSurv(Surv(time,status)~cluster(id), data = d)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 biSurv <- function(formula, data, gamma = NULL, maxIt = 100, method = "dabrowska"){

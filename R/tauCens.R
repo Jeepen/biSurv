@@ -7,11 +7,13 @@
 #' @param data a data.frame containing the variables in the model.
 #' @param method which estimator to use. The non-parametric estimator from Hougaard (2000)
 #' or the naive one where non-fully observed pairs are left out.
-#' @seealso tauPar taucpp
 #' @references Hougaard, Philip. Analysis of multivariate survival data. Springer Science & Business Media, 2012.
 #' @return non-parametric estimate of Kendall's tau and parametric estimates from three different
 #' frailty models.
 #' @details Kendall's tau is a rank based measure of dependence. Note that this estimator is biased towards zero (and so is the estimator for the variance). 
+#' @examples
+#' d <- survival::kidney
+#' tauCens(Surv(time, status) ~ cluster(id), data = d)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 #' @useDynLib biSurv
@@ -97,6 +99,10 @@ print.tauCens <- function(x, digits = max(3L, getOption("digits") - 3L), symboli
 #' @param maxIt maximum number of iterations for NPMLE and pruitt estimators of
 #' bivariate survival function. Doesn't do anything if estimator is 'dabrowska' (default).
 #' @param method which estimator to use for the bivariate survival function.
+#' @examples
+#' d <- survival::kidney
+#' medianConcordance(Surv(time, status) ~ cluster(id), data = d)
+#' 
 #' @details median concordance is a rank based measure of dependence which ensures that
 #' it doesn't change if we transform the marginal distributions with strictly increasing functions.
 #' Median concordance is defined as
@@ -156,16 +162,6 @@ print.medCon <- function (x, digits = max(3L, getOption("digits") - 3L),
 }
 
 
-#' Get Kendall's tau from parameter or parameter from Kendall's tau
-#'
-#' @title Get Kendall's tau from parameter or parameter from Kendall's tau
-#' @param par parameter value for frailty model.
-#' @param dist frailty distribution.
-#' @param output return tau or parameter.
-#' @param type parameterization of frailty distribution.
-#' @return Kendall's tau from parameter or parameter from Kendall's tau.
-#' @export
-#' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 tauPar <- function(par = 0, dist = "gamma", output = "tau", type = "alpha"){
     if(!(dist %in% c("gamma","posstab","invgauss"))){
         stop("dist has to be either 'gamma', 'posstab' or 'invgauss'")

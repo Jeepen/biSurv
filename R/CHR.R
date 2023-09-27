@@ -21,9 +21,8 @@
 #' @importFrom reshape2 melt
 #' @seealso logLikSort autoplot.CHR
 #' @examples
-#' library(survival)
-#' data("diabetic")
-#' CHR(Surv(time,status) ~ cluster(id), data = diabetic)
+#' d <- survival::kidney
+#' CHR(Surv(time,status) ~ cluster(id), data = d)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
 CHR <- function(formula, data, n = 5){
@@ -130,10 +129,9 @@ summary.CHR <- function(object, ...){
 #' @references Chen, Min-Chi & Bandeen-Roche, Karen. (2005). A Diagnostic for Association in Bivariate Survival Models. Lifetime data analysis. 11. 245-64.
 #' @importFrom graphics contour par
 #' @examples
-#' library(survival)
 #' library(ggplot2)
-#' data("diabetic")
-#' obj <- CHR(Surv(time,status) ~ cluster(id), data = diabetic)
+#' d <- survival::kidney
+#' obj <- CHR(Surv(time,status) ~ cluster(id), data = d)
 #' autoplot(obj)
 #' @export
 #' @author Jeppe E. H. Madsen <jeppe.ekstrand.halkjaer@gmail.com>
