@@ -1,0 +1,31 @@
+rm(list = ls())
+setwd("~/Dropbox/RPackage/biSurv")
+library(devtools)
+library(Rcpp)
+compileAttributes(verbose=TRUE)
+document()
+build_vignettes()
+build()
+install(build_vignettes = TRUE)
+check()
+library(biSurv)
+library(survival)
+library(frailtyEM)
+data("diabetic")
+
+m <- coxph(Surv(time,status)~frailty(id),data=diabetic)
+tauCens(Surv(time,status)~cluster(id), data = diabetic)
+coef(tauCens(Surv(time,status)~cluster(id), method = "naive", data = diabetic))[1]
+tauCens(Surv(time,status)~cluster(id), method = "naive", data = diabetic)
+tmp <- CHR(Surv(time,status)~cluster(id), data = diabetic)
+autoplot(tmp)
+indtmp <- independenceTest(Surv(time,status)~cluster(id), data = diabetic)
+indtmp
+independenceTest(Surv(time,status)~cluster(id), data = diabetic, weight = 1)
+ss <- dabrowska(Surv(time,status)~cluster(id), data = diabetic)
+sss <- survfit(Surv(time,status)~1,data=diabetic)
+S <- dabrowska(x,y,xstatus,ystatus)
+S0 <- pruitt(x,y,xstatus,ystatus,gamma=1)
+m <- coxph(Surv(time,status)~trt+frailty(id),data=diabetic)
+
+

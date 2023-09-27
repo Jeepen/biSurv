@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Testing for independence</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h2>Testing for independence</h2>
+
+<h2>Estimation of Kendall&#39;s \(\tau\) for censored data</h2>
+
+<p>The function \texttt{tauCens} can estimate Kendall&#39;s \(\tau\) for censored data. This relies on some extrapolation which here is done in a very simple way using the Kaplan-Meier estimator. This means that the extrapolation doesn&#39;t use information from the other failure time when extrapolating, which makes the estimator biased towards 0. The standard error estimate uses an assumption of independence and only takes the variance of the nominator into account, which means that the estimate of the standard error is going to be too small on average. These problems are illustrated with the following simulation. 100 pairs of failure times are simulated from the Clayton copula and the Gumbel copula respectively. The marginal distributions are exponential with a scale parameter of 1, while censoring times are exponentially distributed with a scale parameter of 2 leading to roughly 30 \% censoring. Then Kendall&#39;s \(\hat{\tau}\) and its standard error are estimated. The simulation is repeated 10000 times and is done for four different values of Kendall&#39;s \(\tau\): 0, 0.25, 0.5, 0.75. The results are summarised in Table \ref{tau}.</p>
+
+<p>\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+\(\tau\) &amp; 0 &amp; 0.25 &amp; 0.5 &amp; 0.75 \ 
+  \hline
+Clayton &amp; 0.007 &amp; 0.173 &amp; 0.322 &amp; 0.440 \ 
+  Clayton theoretical SE &amp; 0.035 &amp; 0.035 &amp; 0.035 &amp; 0.035 \ 
+  Clayton empirical SE &amp; 0.054 &amp; 0.070 &amp; 0.095 &amp; 0.120 \ \hline
+  Gumbel &amp; 0.007 &amp; 0.134 &amp; 0.272 &amp; 0.407 \ 
+  Gumbel theoretical SE &amp; 0.035 &amp; 0.035 &amp; 0.035 &amp; 0.035 \ 
+  Gumbel empirical SE &amp; 0.054 &amp; 0.065 &amp; 0.085 &amp; 0.107 \ 
+   \hline
+\end{tabular}
+\caption{Average estimate of Kendall&#39;s \(\tau\) for different copulas and true values of \(\tau\)}
+\label{tau}
+\end{table}</p>
+
+<p>The estimator looks unbiased in the case of \(\tau=0\) (which corresponds to the independence copula so the results should be the same for both copulas in this case, which they are), but otherwise biased as expected. The bias seems to be worse for the Gumbel copula than for the Clayton copula. One theory could be that this is because the Gumbel copula has upper tail dependence while the Clayton copula has lower tail dependence so the dependence gets &ldquo;censored away&rdquo; in the case of the Gumbel copula, but not in the case of the Clayton copula. We also see that the empirical standard error on average is greater than the estimated one. The estimated standard error is unaffected by the value of Kendall&#39;s \(\tau\) while the actual standard error is bigger the more Kendall&#39;s \(\tau\) differs from 0. </p>
+
+<h3>Conclusion</h3>
+
+<p>The estimator is far from perfect, but can still be useful as a quick way of getting an impression of how much (if any) dependence exists in the data. </p>
+
+<h2>Estimating tail dependence for censored data</h2>
+
+<p>Lower and upper tail dependence between two random variables, \(X_1\) and \(X_2\), are defined as
+\[
+\lambda_l = \lim_{q\downarrow 0}P(X_1\leq F_1^{\leftarrow}(q) | X_2\leq F_2^{\leftarrow}(q)),\qquad \lambda_u = \lim_{q\uparrow 1}P(X_1>F_1^{\leftarrow}(q) | X_2>F_2^{\leftarrow}(q)),
+\]
+where \(F_1\) and \(F_2\) are the marginal distribution functions and \(f^{\leftarrow}(x)\) is the generalized inverse of \(f\). It is difficult to estimate the limits so what is done in this package is that the probabilities
+\[
+P(X_1\leq F_1^{\leftarrow}(q) | X_2\leq F_2^{\leftarrow}(q)),\qquad P(X_1> F_1^{\leftarrow}(q) | X_2> F_2^{\leftarrow}(q)),
+\]
+are estimated, for some value of \(q\) &ldquo;close&rdquo; to 0 or 1. These probabilities are estimated in two different ways in this package:  </p>
+
+<p>One way of estimating the probabilities is by rewriting them in terms of survival functions:
+\begin{align<em>}
+\lambda_l &amp;= \frac{1-P(X_1&gt;F_1<sup>{\leftarrow}(q))</sup> - P(X_2&gt;F_2<sup>{\leftarrow}(q))</sup> + P(X_1&gt;F_1<sup>{\leftarrow}(q),</sup> P(X_2&gt;F_2<sup>{\leftarrow}(q)))}{q},</sup> \
+\lambda_u &amp;= \frac{P(X_1&gt;F_1<sup>{\leftarrow}(q),</sup> P(X_2&gt;F_2<sup>{\leftarrow}(q)))}{1-q}.</sup>
+\end{align</em>}
+These probabilities can be estimated by using the Kaplan-Meier estimator for the univariate survival functions and the Dabrowska estimator for the bivariate survival function. This is a very legitimite way of doing it, but can be slow since the Dabrowska estimator can take a lot of time for big datasets (number of entries to calculate is \(n^2\), where \(n\) is the number of bivariate failure times).</p>
+
+<p>There is, however, a faster and simpler way to estimate the probabilities: Imagine we have a dataset of bivariate failure times and event indicators \((t_{i1}, t_{i2}, \delta_{i1}, \delta_{i2})_{i=1,&hellip;,n}\). Take the subset of \((t_{i1})\) where \(t_{i2}\leq \hat{F}_2^{\leftarrow}\) and \(\delta_{i2} = 1\), where \(\hat{F}\) is 1 minus the Kaplan-Meier estimate of the survival function (\(\delta_{i2} = 1\) is not required for upper tail dependence, and the inequality is of course turning the other way). Then the probabilities are estimated on this subsample using the Kaplan-Meier estimator. </p>
+
+<p>How do they work? Both estimators have been tested for both upper and lower tail dependence on simulated data. \(q = 0.10\) for lower tail dependence and \(q=0.80\) for upper tail dependence. 100 bivariate survival times were simulated from two copula models: the Clayton copula and the Gumbel copula. Marginal distributions were exponential with a parameter of 1, while censoring times were simulated from an exponential distribution with a rate parameter of \(0.3\) leading to roughly 23 \% censoring. The results are summarized in Table \ref{tail} with the average estimated tail dependence from 10000 simulations. </p>
+
+<p>\begin{table}[ht]
+\centering
+\begin{tabular}{llrrrr}
+  \hline
+Copula (tail) &amp; Method &amp; \(\tau = 0\) &amp; \(\tau = 0.25\) &amp; \(\tau = 0.5\) &amp; \(\tau = 0.75\) \ \hline
+Clayton (lower) &amp; True value &amp; 0.100 &amp; 0.419 &amp; 0.709 &amp; 0.891 \ 
+&amp; Dabrowska &amp; 0.103 &amp; 0.421 &amp; 0.708 &amp; 0.890 \ 
+ &amp; Fast &amp; 0.147 &amp; 0.424 &amp; 0.714 &amp; 0.894 \ \hline
+Gumbel (lower) &amp;  True value &amp; 0.100 &amp; 0.203 &amp; 0.385 &amp; 0.647 \
+ &amp; Dabrowska &amp; 0.104 &amp; 0.213 &amp; 0.391 &amp; 0.651 \ 
+  &amp; Fast &amp; 0.145 &amp; 0.232 &amp; 0.387 &amp; 0.645 \ \hline
+  Clayton (upper) &amp; True value &amp; 0.200 &amp; 0.294 &amp; 0.430 &amp; 0.648 \
+  &amp; Dabrowska &amp; 0.185 &amp; 0.273 &amp; 0.398 &amp; 0.607 \
+  &amp; Fast &amp; 0.147 &amp; 0.221 &amp; 0.334 &amp; 0.535 \ \hline
+  Gumbel (upper) &amp; True value &amp; 0.200 &amp; 0.435 &amp; 0.647 &amp; 0.835 \
+  &amp; Dabrowska &amp; 0.184 &amp; 0.411 &amp; 0.615 &amp; 0.790 \
+  &amp; Fast &amp; 0.150 &amp; 0.346 &amp; 0.549 &amp; 0.728 \ \hline
+\end{tabular}
+\caption{Average estimated tail dependence from a few different scenarios.}
+\label{tail}
+\end{table}</p>
+
+<p>The estimators generally seem to underestimate upper tail dependence, but work well for lower tail dependence.  </p>
+
+<p>The idea with this function is that it makes it possible to get a feeling of whether the data set has lower or upper tail dependence. This can be useful when selecting a specific model. If we estimate a value of Kendall&#39;s \(\tau\) of around 0.25 and then estimate a lower tail dependence of 0.4 at the 10 \% quantile then it would be wise not to use the Gumbel copula to describe your data. </p>
+
+</body>
+
+</html>

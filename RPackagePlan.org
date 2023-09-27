@@ -1,0 +1,45 @@
+* TODO Survival function estimators (3 of 5)
+** DONE bivariateHazardscpp(x,y,xstatus,ystatus,xuni,yuni)
+   CLOSED: [2019-02-21 Thu 12:53]
+** DONE bivariateHazards(x,y,xstatus,ystatus)
+   CLOSED: [2019-02-21 Thu 12:53]
+** DONE dabrowska(x, y, xstatus, ystatus)
+   CLOSED: [2019-02-21 Thu 12:55]
+
+** TODO pruitt
+Use apply functions
+** TODO EM
+* TODO Estimators of tail-dependence (2 of 3)
+** DONE tailDep(x, y, xstatus, ystatus, CI = c(FALSE, TRUE), tail = c("lwr", "upr"), method = c("dabrowska", "fast"))
+   CLOSED: [2019-02-28 Thu 10:48]
+** DONE impTailDep(q, par, dist = c("gamma", "posstab", "invgauss"), type = c("alpha", "theta"), tail = c("lwr", "upr"))
+   CLOSED: [2019-02-28 Thu 10:49]
+** plot.tailDep(q, tail = c("lwr", "upr"), CI = c(FALSE, TRUE))
+
+* DONE Transformation to uniform marginals (1 of 1)
+  CLOSED: [2020-05-22 Fri 11:06]
+uniTrans(x, y, xstatus, ystatus, par = NULL, X = NULL, marg = c("KM", "Cox", "gamma", "posstab", "invgauss"), auto = FALSE)
+
+* DONE Estimation af Kendall's tau for censorered data inkl. SD og CI (1 of 1)
+  CLOSED: [2019-02-28 Thu 10:50]
+** DONE tau(x,y,xstatus,ystatus)
+   CLOSED: [2019-02-28 Thu 10:50]
+* DONE Transformation fra Kendall's tau til parametre og omvendt (1 of 1)
+  CLOSED: [2019-02-28 Thu 10:51]
+** DONE tauPar(par = 0, dist = c("gamma", "posstab", "invgauss"), output = c("tau", "par"))
+   CLOSED: [2019-02-28 Thu 10:50]
+
+* Non-parametric estimation of CHR(1 of 4)
+** DONE CHR(x,y,xstatus,ystatus)
+   CLOSED: [2019-03-07 Thu 13:07]
+** CHRtheo(par, dist = c("gamma", "posstab", "invgauss"))
+** CHRdiff(x, y, xstatus, ystatus, par, dist = c("gamma", "posstab", "invgauss"), n = 5)
+** auplot.CHR(?)
+* Non-parametric independence test using CHR (0 of 1)
+* Vignette
+* DONE Test tau estimation
+  CLOSED: [2019-02-28 Thu 10:51]
+* Maybe test using posterior mean for gamma distribution 
+* Documentation
+references
+examples
