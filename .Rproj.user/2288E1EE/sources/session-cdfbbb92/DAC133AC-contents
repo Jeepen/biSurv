@@ -1,6 +1,0 @@
-setwd("biSurv")
-library(devtools)
-document()
-build()
-install(build_vignettes = TRUE)
-check()
